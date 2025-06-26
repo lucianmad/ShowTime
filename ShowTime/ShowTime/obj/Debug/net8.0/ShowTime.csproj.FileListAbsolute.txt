@@ -60,3 +60,4 @@
 /home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/obj/Debug/net8.0/ShowTime.pdb
 /home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/obj/Debug/net8.0/ShowTime.genruntimeconfig.cache
 /home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/obj/Debug/net8.0/ref/ShowTime.dll
+/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/obj/Debug/net8.0/ShowTime.sourcelink.json
