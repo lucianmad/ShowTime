@@ -4,14 +4,14 @@
     "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj": {}
   },
   "projects": {
-    "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj": {
+    "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj",
-        "projectName": "ShowTime",
-        "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj",
+        "projectUniqueName": "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj",
+        "projectName": "ShowTime.DataAccess",
+        "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj",
         "packagesPath": "/home/lucianm/.nuget/packages/",
-        "outputPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/obj/",
+        "outputPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/lucianm/.nuget/NuGet/NuGet.Config"
@@ -38,9 +38,98 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.6, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.116/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj",
+        "projectName": "ShowTime",
+        "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj",
+        "packagesPath": "/home/lucianm/.nuget/packages/",
+        "outputPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/lucianm/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj": {
+                "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
             "Microsoft.AspNetCore.Components.WebAssembly.Server": {
               "target": "Package",
               "version": "[8.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.6, )"
             }
           },
           "imports": [
