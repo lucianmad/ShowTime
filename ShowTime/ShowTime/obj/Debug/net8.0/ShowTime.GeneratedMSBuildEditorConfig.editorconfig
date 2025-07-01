@@ -15,6 +15,9 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.MudDebugAnalyzer = 
+build_property.MudAllowedAttributePattern = 
+build_property.MudAllowedAttributeList = 
 build_property.RootNamespace = ShowTime
 build_property.RootNamespace = ShowTime
 build_property.ProjectDir = /home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/
@@ -28,6 +31,18 @@ build_property._RazorSourceGeneratorDebug =
 
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/AddArtist.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BZGRBcnRpc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Artists.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BcnRpc3RzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Error.razor]

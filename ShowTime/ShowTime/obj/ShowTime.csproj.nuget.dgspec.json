@@ -4,6 +4,63 @@
     "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj": {}
   },
   "projects": {
+    "/home/lucianm/RiderProjects/ShowTime/ShowTime.BusinessLogic/ShowTime.BusinessLogic.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/lucianm/RiderProjects/ShowTime/ShowTime.BusinessLogic/ShowTime.BusinessLogic.csproj",
+        "projectName": "ShowTime.BusinessLogic",
+        "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.BusinessLogic/ShowTime.BusinessLogic.csproj",
+        "packagesPath": "/home/lucianm/.nuget/packages/",
+        "outputPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.BusinessLogic/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/lucianm/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj": {
+                "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.116/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -101,6 +158,9 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
+              "/home/lucianm/RiderProjects/ShowTime/ShowTime.BusinessLogic/ShowTime.BusinessLogic.csproj": {
+                "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.BusinessLogic/ShowTime.BusinessLogic.csproj"
+              },
               "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj": {
                 "projectPath": "/home/lucianm/RiderProjects/ShowTime/ShowTime.DataAccess/ShowTime.DataAccess.csproj"
               }
@@ -130,6 +190,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[9.0.6, )"
+            },
+            "MudBlazor": {
+              "target": "Package",
+              "version": "[8.8.0, )"
             }
           },
           "imports": [

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ShowTime")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b3a9815ab737d22c3efb2054c7cd4152e440562")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+160d9ec68ac4d885744a3622f07dc34e567cce87")]
 [assembly: System.Reflection.AssemblyProductAttribute("ShowTime")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ShowTime")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,6 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
+using ShowTime.BusinessLogic.Abstractions;
+using ShowTime.BusinessLogic.Services;
 using ShowTime.Components;
 using ShowTime.DataAccess;
+using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +16,11 @@ builder.Services.AddRazorComponents()
 var connectionString = builder.Configuration.GetConnectionString("ShowTimeContext");
 builder.Services.AddDbContext<ShowTimeDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddTransient<IRepository<Artist>, ArtistRepository>();
+builder.Services.AddTransient<IArtistService, ArtistService>();
+
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 
@@ -31,6 +41,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode();
+
 app.Run();

@@ -4,10 +4,12 @@ namespace ShowTime.DataAccess.Repositories;
 
 public class GenericRepository<T> : IRepository<T> where T : class
 {
+    private readonly ShowTimeDbContext _context;
     private readonly DbSet<T> _dbSet;
 
     public GenericRepository(ShowTimeDbContext context)
     {
+        _context = context;
         _dbSet = context.Set<T>();
     }
     
@@ -31,6 +33,7 @@ public class GenericRepository<T> : IRepository<T> where T : class
         try
         {
             await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -47,7 +50,8 @@ public class GenericRepository<T> : IRepository<T> where T : class
             {
                 throw new Exception($"Entity with id {id} not found.");
             }
-            _dbSet.Update(entity);   
+            _context.Entry(entry).CurrentValues.SetValues(entity);
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -65,6 +69,7 @@ public class GenericRepository<T> : IRepository<T> where T : class
                 throw new Exception($"Entity with id {id} not found.");       
             }
             _dbSet.Remove(entity);   
+            await _context.SaveChangesAsync();           
         }
         catch (Exception ex)
         {

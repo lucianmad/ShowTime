@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "0TGSLitmbgajk8Wctwhot0AaxnjDwAMrtOxb+mcaE9Y=",
+  "Hash": "5m8118u/9THvhl7bBIxJMB6LyzQsFz5sW10tJFAzQSQ=",
   "Source": "ShowTime",
   "BasePath": "_content/ShowTime",
   "Mode": "Default",
@@ -16,6 +16,44 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "/home/lucianm/.nuget/packages/mudblazor/8.8.0/staticwebassets/MudBlazor.min.css",
+      "SourceId": "MudBlazor",
+      "SourceType": "Package",
+      "ContentRoot": "/home/lucianm/.nuget/packages/mudblazor/8.8.0/staticwebassets/",
+      "BasePath": "_content/MudBlazor",
+      "RelativePath": "MudBlazor.min.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "/home/lucianm/.nuget/packages/mudblazor/8.8.0/staticwebassets/MudBlazor.min.css"
+    },
+    {
+      "Identity": "/home/lucianm/.nuget/packages/mudblazor/8.8.0/staticwebassets/MudBlazor.min.js",
+      "SourceId": "MudBlazor",
+      "SourceType": "Package",
+      "ContentRoot": "/home/lucianm/.nuget/packages/mudblazor/8.8.0/staticwebassets/",
+      "BasePath": "_content/MudBlazor",
+      "RelativePath": "MudBlazor.min.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "/home/lucianm/.nuget/packages/mudblazor/8.8.0/staticwebassets/MudBlazor.min.js"
+    },
     {
       "Identity": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/obj/Debug/net8.0/scopedcss/bundle/ShowTime.styles.css",
       "SourceId": "ShowTime",
