@@ -2,7 +2,7 @@ using ShowTime.DataAccess.Models;
 
 namespace ShowTime.DataAccess.Repositories;
 
-public interface IFestivalRepository
+public interface IFestivalRepository : IRepository<Festival>
 {
     public Task<Festival?> GetByName(string name);
     public Task<IEnumerable<Festival>> GetAllByDate(DateTime date);

@@ -10,24 +10,27 @@ using ShowTime.DataAccess.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
 
 var connectionString = builder.Configuration.GetConnectionString("ShowTimeContext");
 builder.Services.AddDbContext<ShowTimeDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddTransient<IRepository<Artist>, ArtistRepository>();
+builder.Services.AddTransient<IRepository<Festival>, FestivalRepository>();
 builder.Services.AddTransient<IArtistService, ArtistService>();
+builder.Services.AddTransient<IFestivalService, FestivalService>();
 
 builder.Services.AddMudServices();
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
+    //app.UseWebAssemblyDebugging();
 }
 else
 {
@@ -43,6 +46,6 @@ app.UseAntiforgery();
 
 
 app.MapRazorComponents<App>()
-    .AddInteractiveWebAssemblyRenderMode();
+    .AddInteractiveServerRenderMode();
 
 app.Run();

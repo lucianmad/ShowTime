@@ -1,0 +1,64 @@
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Dtos
+@inject IArtistService ArtistService
+@inject ISnackbar Snackbar
+@rendermode InteractiveServer
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h4" Class="mb-6" Style="color: #6a1b9a;">Add New Artist</MudText>
+
+        <EditForm Model="NewArtist" OnValidSubmit="Submit">
+            <MudTextField @bind-Value="NewArtist.Name"
+                          Label="Artist Name"
+                          Required="true"
+                          RequiredError="Name is required"
+                          Class="mb-4"/>
+
+            <MudTextField @bind-Value="NewArtist.Genre"
+                          Label="Genre"
+                          Required="true"
+                          RequiredError="Genre is required"
+                          Class="mb-4"/>
+
+            <MudTextField @bind-Value="NewArtist.Image"
+                          Label="Image URL"
+                          Class="mb-6"
+                          HelperText="Paste a direct image link"/>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <div class="d-flex justify-end gap-4">
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Default"
+                       @onclick="Cancel">
+                Cancel
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       ButtonType="ButtonType.Submit"
+                       Disabled="@(!IsFormValid)"
+                       @onclick="Submit">
+                Add Artist
+            </MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+    [SupplyParameterFromForm]
+    private ArtistCreateDto NewArtist { get; set; } = new();
+    
+    private bool IsFormValid => 
+        !string.IsNullOrWhiteSpace(NewArtist.Name) &&
+        !string.IsNullOrWhiteSpace(NewArtist.Genre);
+    
+    private async Task Submit()
+    {
+        await ArtistService.AddEntityAsync(NewArtist);
+        Snackbar.Add("Artist successfully added", Severity.Success);
+        MudDialog?.Close(DialogResult.Ok(true));
+    }
+    private void Cancel() => MudDialog?.Cancel();
+}

@@ -33,20 +33,40 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/AddArtist.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BZGRBcnRpc3QucmF6b3I=
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/AddArtistDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BZGRBcnRpc3REaWFsb2cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/AddFestivalDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BZGRGZXN0aXZhbERpYWxvZy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Artists.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BcnRpc3RzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3VudGVyLnJhem9y
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/DeleteArtistDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZWxldGVBcnRpc3REaWFsb2cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/DeleteFestivalDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZWxldGVGZXN0aXZhbERpYWxvZy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/EditArtistDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FZGl0QXJ0aXN0RGlhbG9nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/EditFestivalDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FZGl0RmVzdGl2YWxEaWFsb2cucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FcnJvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Festivals.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9GZXN0aXZhbHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Home.razor]

@@ -1,0 +1,71 @@
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Dtos
+@inject IArtistService ArtistService
+@rendermode InteractiveServer
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h4" Class="mb-6" Style="color: #6a1b9a;">Edit Artist</MudText>
+            
+        <EditForm Model="ArtistToEdit" OnValidSubmit="Submit">
+            <MudTextField @bind-Value="ArtistToEdit.Name" 
+                          Label="Artist Name" 
+                          Required="true"
+                          RequiredError="Name is required"
+                          Class="mb-4"/>
+                
+            <MudTextField @bind-Value="ArtistToEdit.Genre" 
+                          Label="Genre" 
+                          Required="true"
+                          RequiredError="Genre is required"
+                          Class="mb-4"/>
+                
+            <MudTextField @bind-Value="ArtistToEdit.Image" 
+                          Label="Image URL" 
+                          Class="mb-6"
+                          HelperText="Paste a direct image link"/>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <div class="d-flex justify-end gap-4">
+            <MudButton @onclick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary" 
+                       @onclick="Submit"
+                       Disabled="@(!IsFormValid)">OK</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+    
+    [Parameter]
+    public int ArtistId { get; set; }
+    private ArtistCreateDto ArtistToEdit { get; set; } = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var artist = await ArtistService.GetEntityByIdAsync(ArtistId);
+
+        ArtistToEdit = new ArtistCreateDto
+        {
+            Name = artist.Name,
+            Genre = artist.Genre,
+            Image = artist.Image
+        };
+    }
+    
+    private bool IsFormValid => 
+        !string.IsNullOrWhiteSpace(ArtistToEdit.Name) &&
+        !string.IsNullOrWhiteSpace(ArtistToEdit.Genre);
+    
+    private async Task Submit()
+    {
+        await ArtistService.UpdateEntityAsync(ArtistId, ArtistToEdit);
+        MudDialog?.Close(DialogResult.Ok(true));
+    }
+    private void Cancel() => MudDialog?.Cancel();
+
+
+}

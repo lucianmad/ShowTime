@@ -1,0 +1,88 @@
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Dtos
+@inject IFestivalService FestivalService
+@inject ISnackbar Snackbar
+@rendermode InteractiveServer
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h4" Class="mb-6" Style="color: #6a1b9a;">Add New Festival</MudText>
+
+        <EditForm Model="NewFestival" OnValidSubmit="Submit">
+            <MudTextField @bind-Value="NewFestival.Name"
+                          Label="Festival Name"
+                          Required="true"
+                          RequiredError="Name is required"
+                          Class="mb-4"/>
+            <MudTextField @bind-Value="NewFestival.Location"
+                          Label="Location"
+                          Required="true"
+                          RequiredError="Location is required"
+                          Class="mb-4"/>
+            <MudDatePicker @bind-Date="NewFestival.StartDate"
+                           Label="Start Date"
+                           DisplayMonths="2"
+                           TitleDateFormat="dddd, dd MMMM"
+                           Class="mb-6"
+                           HelperText="Start Date is required"/>
+            <MudDatePicker @bind-Date="NewFestival.EndDate"
+                           Label="End Date"
+                           DisplayMonths="2"
+                           TitleDateFormat="dddd, dd MMMM"
+                           Class="mb-6"
+                           HelperText="End Date is required"/>
+            <MudTextField @bind-Value="NewFestival.SplashArt"
+                          Label="Splash Art"
+                          Class="mb-6"
+                          HelperText="Paste a direct image link"/>
+            <MudTextField @bind-Value="NewFestival.Capacity"
+                          Label="Capacity"
+                          Required="true"
+                          RequiredError="Capacity is required"
+                          Class="mb-4"/>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <div class="d-flex justify-end gap-4">
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Default"
+                       @onclick="Cancel">
+                Cancel
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       ButtonType="ButtonType.Submit"
+                       Disabled="@(!IsFormValid)"
+                       @onclick="Submit">
+                Add Festival
+            </MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+    [SupplyParameterFromForm]
+    private FestivalCreateDto NewFestival { get; set; } = new();
+
+    private bool IsFormValid =>
+        !string.IsNullOrWhiteSpace(NewFestival.Name) &&
+        !string.IsNullOrWhiteSpace(NewFestival.Location) &&
+        NewFestival is { StartDate: not null, EndDate: not null } &&
+        NewFestival.StartDate <= NewFestival.EndDate &&
+        NewFestival.Capacity > 0;
+
+    public async Task Submit()
+    {
+        await FestivalService.AddEntityAsync(NewFestival);
+        Snackbar.Add("Festival successfully added", Severity.Success);
+        MudDialog?.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel() => MudDialog?.Cancel();
+
+    //adaugat artisti in lineup la festival
+    //validari pe field uri la create si edit
+    //popup la delete
+    //filtrari (dupa start date end date etc)
+}

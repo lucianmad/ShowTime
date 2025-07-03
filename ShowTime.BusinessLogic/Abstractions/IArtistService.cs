@@ -3,11 +3,6 @@ using ShowTime.DataAccess.Models;
 
 namespace ShowTime.BusinessLogic.Abstractions;
 
-public interface IArtistService
+public interface IArtistService : IEntityService<ArtistGetDto, ArtistCreateDto>
 {
-    Task<ArtistGetDto> GetArtistByIdAsync(int id);
-    Task<IList<ArtistGetDto>> GetAllArtistsAsync();
-    Task AddArtistAsync(ArtistCreateDto artist);
-    Task UpdateArtistAsync(int id, ArtistCreateDto artist);
-    Task DeleteArtistAsync(int id);
 }

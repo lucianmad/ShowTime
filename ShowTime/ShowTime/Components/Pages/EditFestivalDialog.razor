@@ -1,0 +1,92 @@
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Dtos
+@inject IFestivalService FestivalService
+@rendermode InteractiveServer
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h4" Class="mb-6" Style="color: #6a1b9a;">Edit Festival</MudText>
+            
+        <EditForm Model="FestivalToEdit" OnValidSubmit="Submit">
+            <MudTextField @bind-Value="FestivalToEdit.Name" 
+                          Label="Festival Name" 
+                          Required="true"
+                          RequiredError="Name is required"
+                          Class="mb-4"/>
+            <MudTextField @bind-Value="FestivalToEdit.Location" 
+                          Label="Location" 
+                          Required="true"
+                          RequiredError="Location is required"
+                          Class="mb-4"/>
+            <MudDatePicker @bind-Date="FestivalToEdit.StartDate"
+                           Label="Start Date" 
+                           DisplayMonths="2" 
+                           TitleDateFormat="dddd, dd MMMM"  
+                           Class="mb-6"
+                           HelperText="Start Date is required"/>
+            <MudDatePicker @bind-Date="FestivalToEdit.EndDate"
+                           Label="End Date" 
+                           DisplayMonths="2" 
+                           TitleDateFormat="dddd, dd MMMM"  
+                           Class="mb-6"
+                           HelperText="End Date is required"/>
+            <MudTextField @bind-Value="FestivalToEdit.SplashArt" 
+                          Label="Splash Art" 
+                          Class="mb-6"
+                          HelperText="Paste a direct image link"/>
+            <MudTextField @bind-Value="FestivalToEdit.Capacity"   
+                          Label="Capacity" 
+                          Required="true"
+                          RequiredError="Capacity is required"
+                          Class="mb-4"/>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <div class="d-flex justify-end gap-4">
+            <MudButton @onclick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary" 
+                       @onclick="Submit"
+                       Disabled="@(!IsFormValid)">OK</MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+    
+    [Parameter]
+    public int FestivalId { get; set; }
+    private FestivalCreateDto FestivalToEdit { get; set; } = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var festival = await FestivalService.GetEntityByIdAsync(FestivalId);
+
+        FestivalToEdit = new FestivalCreateDto
+        {
+            Name = festival.Name,
+            Location = festival.Location,
+            StartDate = festival.StartDate,
+            EndDate = festival.EndDate,
+            SplashArt = festival.SplashArt,
+            Capacity = festival.Capacity
+        };
+    }
+    
+    private bool IsFormValid =>
+        !string.IsNullOrWhiteSpace(FestivalToEdit.Name) &&
+        !string.IsNullOrWhiteSpace(FestivalToEdit.Location) &&
+        FestivalToEdit is { StartDate: not null, EndDate: not null } &&
+        FestivalToEdit.StartDate <= FestivalToEdit.EndDate &&
+        FestivalToEdit.Capacity > 0;
+    
+    private async Task Submit()
+    {
+        await FestivalService.UpdateEntityAsync(FestivalId, FestivalToEdit);
+        MudDialog?.Close(DialogResult.Ok(true));
+    }
+    private void Cancel() => MudDialog?.Cancel();
+
+
+}

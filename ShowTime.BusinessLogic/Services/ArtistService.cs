@@ -5,102 +5,43 @@ using ShowTime.DataAccess.Repositories;
 
 namespace ShowTime.BusinessLogic.Services;
 
-public class ArtistService : IArtistService
+public class ArtistService : GenericEntityService<Artist, ArtistGetDto, ArtistCreateDto>,IArtistService
 {
-    private readonly IRepository<Artist> _artistRepository;
+    protected override string EntityName => "Artist";
 
-    public ArtistService(IRepository<Artist> artistRepository)
+    public ArtistService(IRepository<Artist> artistRepository) : base(artistRepository)
     {
-        _artistRepository = artistRepository;
     }
     
-    public async Task<ArtistGetDto> GetArtistByIdAsync(int id)
+    protected override ArtistGetDto MapToGetDto(Artist artist)
     {
-        try
+        return new ArtistGetDto
         {
-            var artist = await _artistRepository.GetByIdAsync(id);
-            if (artist == null)
-            {
-                throw new Exception($"Artist with id {id} not found");
-            }
-            return new ArtistGetDto
-            {
-                Id = artist.Id,
-                Name = artist.Name,
-                Genre = artist.Genre,
-                Image = artist.Image
-            };
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Unable to retrieve artist with id {id}: {ex.Message}");
-        }
-    }
-    
-    public async Task<IList<ArtistGetDto>> GetAllArtistsAsync()
-    {
-        try
-        {
-            var artists = await _artistRepository.GetAllAsync();
-            return artists.Select(artist => new ArtistGetDto
-            {
-                Id = artist.Id,
-                Name = artist.Name,
-                Genre = artist.Genre,
-                Image = artist.Image
-            }).ToList();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Unable to retrieve artists: {ex.Message}");
-        }
+            Id = artist.Id,
+            Name = artist.Name,
+            Genre = artist.Genre,
+            Image = artist.Image
+        };
     }
 
-    public async Task AddArtistAsync(ArtistCreateDto artistCreateDto)
+    protected override Artist MapToEntityForCreate(ArtistCreateDto artistCreateDto)
     {
-        var artist = new Artist
+        return new Artist
         {
             Name = artistCreateDto.Name,
             Genre = artistCreateDto.Genre,
             Image = artistCreateDto.Image
-        };
-        try
-        {
-            await _artistRepository.AddAsync(artist);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Unable to add artist: {ex.Message}");
-        }
+        };   
     }
-    
-    public async Task UpdateArtistAsync(int id, ArtistCreateDto artistCreateDto)
+
+    protected override Artist MapToEntityForUpdate(ArtistCreateDto artistCreateDto, int id)
     {
-        try
+        return new Artist
         {
-            var artist = new Artist
-            {
-                Name = artistCreateDto.Name,
-                Genre = artistCreateDto.Genre,
-                Image = artistCreateDto.Image
-            };
-            await _artistRepository.UpdateAsync(id, artist);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Unable to update artist with id {id}: {ex.Message}");       
-        }
-    }
-    
-    public async Task DeleteArtistAsync(int id)
-    {
-        try
-        {
-            await _artistRepository.DeleteAsync(id);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Unable to delete artist with id {id}: {ex.Message}");
-        }
+            Id = id,
+            Name = artistCreateDto.Name,
+            Genre = artistCreateDto.Genre,
+            Image = artistCreateDto.Image
+        };  
     }
 }

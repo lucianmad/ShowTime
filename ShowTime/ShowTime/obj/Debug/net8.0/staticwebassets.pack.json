@@ -21,12 +21,20 @@
       "PackagePath": "staticwebassets/favicon.png"
     },
     {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/21_savage.jpeg",
+      "PackagePath": "staticwebassets/images/artists/21_savage.jpeg"
+    },
+    {
       "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/armin_van_buuren.jpeg",
       "PackagePath": "staticwebassets/images/artists/armin_van_buuren.jpeg"
     },
     {
       "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/avicii.jpeg",
       "PackagePath": "staticwebassets/images/artists/avicii.jpeg"
+    },
+    {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/beach_please.png",
+      "PackagePath": "staticwebassets/images/artists/beach_please.png"
     },
     {
       "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/becky_g.jpeg",
@@ -111,6 +119,18 @@
     {
       "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/tzanca_uraganu.jpeg",
       "PackagePath": "staticwebassets/images/artists/tzanca_uraganu.jpeg"
+    },
+    {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/beach_please.png",
+      "PackagePath": "staticwebassets/images/festivals/beach_please.png"
+    },
+    {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/festobal.jpg",
+      "PackagePath": "staticwebassets/images/festivals/festobal.jpg"
+    },
+    {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/untold.png",
+      "PackagePath": "staticwebassets/images/festivals/untold.png"
     },
     {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.ShowTime.Microsoft.AspNetCore.StaticWebAssets.props",
