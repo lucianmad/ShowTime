@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Repositories.Abstractions;
 
 namespace ShowTime.DataAccess.Repositories;
 

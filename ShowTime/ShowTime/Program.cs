@@ -6,6 +6,7 @@ using ShowTime.Components;
 using ShowTime.DataAccess;
 using ShowTime.DataAccess.Models;
 using ShowTime.DataAccess.Repositories;
+using ShowTime.DataAccess.Repositories.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +16,14 @@ var connectionString = builder.Configuration.GetConnectionString("ShowTimeContex
 builder.Services.AddDbContext<ShowTimeDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddTransient<IRepository<Artist>, ArtistRepository>();
-builder.Services.AddTransient<IRepository<Festival>, FestivalRepository>();
+builder.Services.AddTransient<IArtistRepository, ArtistRepository>();
+builder.Services.AddTransient<IFestivalRepository, FestivalRepository>();
+builder.Services.AddTransient<IGenreRepository, GenreRepository>();
+builder.Services.AddTransient<ILocationRepository, LocationRepository>();
 builder.Services.AddTransient<IArtistService, ArtistService>();
 builder.Services.AddTransient<IFestivalService, FestivalService>();
+builder.Services.AddTransient<IGenreService, GenreService>();
+builder.Services.AddTransient<ILocationService, LocationService>();
 
 builder.Services.AddMudServices();
 

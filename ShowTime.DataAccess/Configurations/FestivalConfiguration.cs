@@ -11,12 +11,15 @@ public class FestivalConfiguration : IEntityTypeConfiguration<Festival>
         builder.ToTable("Festivals");
         builder.HasKey(f => f.Id);
         builder.Property(f => f.Name).IsRequired().HasMaxLength(255);
-        builder.Property(f => f.Location).IsRequired().HasMaxLength(255);
         builder.Property(f => f.StartDate).IsRequired();
         builder.Property(f => f.EndDate).IsRequired();
         builder.Property(f => f.Capacity).IsRequired();
         
         builder.HasIndex(f => f.Name).IsUnique();
+
+        builder.HasOne(f => f.Location)
+            .WithMany(l => l.Festivals)
+            .HasForeignKey(f => f.LocationId);
         
         builder.HasMany(f => f.Artists)
             .WithMany(a => a.Festivals)

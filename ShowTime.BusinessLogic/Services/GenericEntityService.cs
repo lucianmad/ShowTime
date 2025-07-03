@@ -1,5 +1,6 @@
 using ShowTime.BusinessLogic.Abstractions;
 using ShowTime.DataAccess.Repositories;
+using ShowTime.DataAccess.Repositories.Abstractions;
 
 namespace ShowTime.BusinessLogic.Services;
 

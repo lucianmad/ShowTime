@@ -1,4 +1,4 @@
-namespace ShowTime.DataAccess.Repositories;
+namespace ShowTime.DataAccess.Repositories.Abstractions;
 
 public interface IRepository<T> where T: class
 {

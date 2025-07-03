@@ -12,9 +12,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(u => u.Id);
         builder.Property(u => u.Email).IsRequired().HasMaxLength(255);
         builder.Property(u => u.Password).IsRequired().HasMaxLength(255);
-        builder.Property(u => u.Role).IsRequired();
         
         builder.HasIndex(u => u.Email).IsUnique();
+        
+        builder.HasOne(u => u.Role)
+            .WithMany(r => r.Users)
+            .HasForeignKey(u => u.RoleId);
         
         builder.HasMany(u => u.Festivals)
             .WithMany(f => f.Users)

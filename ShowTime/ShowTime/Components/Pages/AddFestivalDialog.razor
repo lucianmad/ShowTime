@@ -1,6 +1,7 @@
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IFestivalService FestivalService
+@inject ILocationService LocationService
 @inject ISnackbar Snackbar
 @rendermode InteractiveServer
 
@@ -14,11 +15,36 @@
                           Required="true"
                           RequiredError="Name is required"
                           Class="mb-4"/>
-            <MudTextField @bind-Value="NewFestival.Location"
-                          Label="Location"
-                          Required="true"
-                          RequiredError="Location is required"
-                          Class="mb-4"/>
+            <MudSelect @bind-Value="SelectedCountry" 
+                       Label="Country" 
+                       Required="true" 
+                       RequiredError="Country is required" 
+                       Class="mb-4" 
+                       Placeholder="Select a country">
+                @if (_countries != null)
+                {
+                    @foreach (var country in _countries)
+                    {
+                        <MudSelectItem Value="@country">@country</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+
+            <MudSelect @bind-Value="NewFestival.LocationId" 
+                       Label="City" 
+                       Required="true" 
+                       RequiredError="City is required" 
+                       Class="mb-4" 
+                       Placeholder="Select a city" 
+                       Disabled="@string.IsNullOrEmpty(SelectedCountry)">
+                @if (!string.IsNullOrEmpty(SelectedCountry) && _locations != null)
+                {
+                    @foreach (var location in _locations.Where(l => l.Country == SelectedCountry))
+                    {
+                        <MudSelectItem Value="@location.Id">@location.City</MudSelectItem>
+                    }
+                }
+            </MudSelect>
             <MudDatePicker @bind-Date="NewFestival.StartDate"
                            Label="Start Date"
                            DisplayMonths="2"
@@ -64,10 +90,22 @@
     private IMudDialogInstance? MudDialog { get; set; }
     [SupplyParameterFromForm]
     private FestivalCreateDto NewFestival { get; set; } = new();
+    private IList<LocationGetDto>? _locations;
+    private List<string>? _countries = new();
+    private string SelectedCountry { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _locations = await LocationService.GetAllEntitiesAsync();
+        if (_locations != null)
+        {
+            _countries = _locations.Select(l => l.Country).Distinct().OrderBy(c => c).ToList();
+        }
+    }
 
     private bool IsFormValid =>
         !string.IsNullOrWhiteSpace(NewFestival.Name) &&
-        !string.IsNullOrWhiteSpace(NewFestival.Location) &&
+        NewFestival.LocationId != 0 &&
         NewFestival is { StartDate: not null, EndDate: not null } &&
         NewFestival.StartDate <= NewFestival.EndDate &&
         NewFestival.Capacity > 0;

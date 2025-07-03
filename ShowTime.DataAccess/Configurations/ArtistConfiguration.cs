@@ -14,6 +14,10 @@ public class ArtistConfiguration : IEntityTypeConfiguration<Artist>
         
         builder.HasIndex(a => a.Name).IsUnique();
 
+        builder.HasOne(a => a.Genre)
+            .WithMany(g => g.Artists)
+            .HasForeignKey(a => a.GenreId);
+        
         builder.HasMany(a => a.Festivals)
             .WithMany(f => f.Artists)
             .UsingEntity<Lineup>();

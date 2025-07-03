@@ -10,7 +10,10 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
     {
         builder.ToTable("Bookings");
         builder.HasKey(b => new {b.FestivalId, b.UserId});
-        builder.Property(b => b.Type).HasConversion<string>().IsRequired();
         builder.Property(b => b.Price).IsRequired();
+        
+        builder.HasOne(b => b.TicketType)
+            .WithMany(t => t.Bookings)
+            .HasForeignKey(b => b.TicketTypeId);
     }
 }

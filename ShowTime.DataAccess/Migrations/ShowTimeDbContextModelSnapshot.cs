@@ -30,9 +30,8 @@ namespace ShowTime.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Image")
                         .IsRequired()
@@ -44,6 +43,8 @@ namespace ShowTime.DataAccess.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GenreId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -62,11 +63,12 @@ namespace ShowTime.DataAccess.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TicketTypeId")
+                        .HasColumnType("int");
 
                     b.HasKey("FestivalId", "UserId");
+
+                    b.HasIndex("TicketTypeId");
 
                     b.HasIndex("UserId");
 
@@ -87,10 +89,8 @@ namespace ShowTime.DataAccess.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -106,10 +106,33 @@ namespace ShowTime.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocationId");
+
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Festivals", (string)null);
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Genre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Lineup", b =>
@@ -136,6 +159,80 @@ namespace ShowTime.DataAccess.Migrations
                     b.ToTable("Lineups", (string)null);
                 });
 
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("City")
+                        .IsUnique();
+
+                    b.ToTable("Locations", (string)null);
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.TicketType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TicketTypes", (string)null);
+                });
+
             modelBuilder.Entity("ShowTime.DataAccess.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -154,7 +251,7 @@ namespace ShowTime.DataAccess.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Role")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -162,7 +259,20 @@ namespace ShowTime.DataAccess.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Artist", b =>
+                {
+                    b.HasOne("ShowTime.DataAccess.Models.Genre", "Genre")
+                        .WithMany("Artists")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Booking", b =>
@@ -170,6 +280,12 @@ namespace ShowTime.DataAccess.Migrations
                     b.HasOne("ShowTime.DataAccess.Models.Festival", "Festival")
                         .WithMany("Bookings")
                         .HasForeignKey("FestivalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShowTime.DataAccess.Models.TicketType", "TicketType")
+                        .WithMany("Bookings")
+                        .HasForeignKey("TicketTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -181,7 +297,20 @@ namespace ShowTime.DataAccess.Migrations
 
                     b.Navigation("Festival");
 
+                    b.Navigation("TicketType");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Festival", b =>
+                {
+                    b.HasOne("ShowTime.DataAccess.Models.Location", "Location")
+                        .WithMany("Festivals")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Lineup", b =>
@@ -203,6 +332,17 @@ namespace ShowTime.DataAccess.Migrations
                     b.Navigation("Festival");
                 });
 
+            modelBuilder.Entity("ShowTime.DataAccess.Models.User", b =>
+                {
+                    b.HasOne("ShowTime.DataAccess.Models.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("ShowTime.DataAccess.Models.Artist", b =>
                 {
                     b.Navigation("Lineups");
@@ -213,6 +353,26 @@ namespace ShowTime.DataAccess.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("Lineups");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Genre", b =>
+                {
+                    b.Navigation("Artists");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Location", b =>
+                {
+                    b.Navigation("Festivals");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Role", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.TicketType", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.User", b =>

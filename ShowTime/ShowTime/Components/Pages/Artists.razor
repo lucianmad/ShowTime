@@ -2,6 +2,7 @@
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IArtistService ArtistService
+@inject IGenreService GenreService
 @rendermode InteractiveServer
 @inject IDialogService DialogService
 
@@ -17,6 +18,31 @@
         </MudItem>
     </MudGrid>
     
+    <MudGrid Class="mb-4" Spacing="2">
+        <MudItem xs="12" sm="6">
+            <MudTextField Value="_searchTerm"
+                          Label="Search by name"
+                          Variant="Variant.Filled"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          ValueChanged="@((string value) => OnSearchChanged(value))"/>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="int?" 
+                       Value="_selectedGenreId" 
+                       Label="Filter by genre" 
+                       Variant="Variant.Filled" 
+                       Clearable="true" 
+                       ValueChanged="@((int? value) => OnGenreChanged(value))">
+                @foreach (var genre in _genre)
+                {
+                    <MudSelectItem Value="(int?)genre.Id">@genre.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+
 
     @if (_artists.Count == 0)
     {
@@ -50,7 +76,7 @@
                         </div>
                         <MudCardContent Style="background: linear-gradient(135deg, #41267a 0%, #1a1a2e 100%);">
                             <MudText Typo="Typo.h6" Style="color: white; margin-bottom: 8px;">@artist.Name</MudText>
-                            <MudText Typo="Typo.body2" Style="color: #bdc3c7;">@artist.Genre</MudText>
+                            <MudText Typo="Typo.body2" Style="color: #bdc3c7;">@artist.Genre?.Name</MudText>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
@@ -61,9 +87,15 @@
 
 @code {
     private IList<ArtistGetDto> _artists = new List<ArtistGetDto>();
+    private IList<GenreGetDto> _genre = new List<GenreGetDto>();
+    
+    private string _searchTerm = string.Empty;
+    private int? _selectedGenreId = null;
+
     
     protected override async Task OnInitializedAsync()
     {
+        _genre = await GenreService.GetAllEntitiesAsync();
         _artists = await ArtistService.GetAllEntitiesAsync();
     }
 
@@ -77,6 +109,7 @@
         if (result != null && !result.Canceled)
         {
             _artists = await ArtistService.GetAllEntitiesAsync();
+            await ApplyFiltersAsync();
         }
     }
     
@@ -96,6 +129,7 @@
         if (result != null && !result.Canceled)
         {
             _artists = await ArtistService.GetAllEntitiesAsync();
+            await ApplyFiltersAsync();
         }
     }
 
@@ -116,6 +150,42 @@
         var result = await dialogReference.Result;
 
         if (result != null && !result.Canceled)
+        {
+            _artists = await ArtistService.GetAllEntitiesAsync();
+            await ApplyFiltersAsync();
+        }
+    }
+    
+    private async Task OnSearchChanged(string newValue)
+    {
+        _searchTerm = newValue;
+        await ApplyFiltersAsync();
+    }
+
+    private async Task OnGenreChanged(int? newGenreId)
+    {
+        _selectedGenreId = newGenreId;
+        await ApplyFiltersAsync();
+    }
+
+    private async Task ApplyFiltersAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(_searchTerm) && _selectedGenreId.HasValue)
+        {
+            var filteredByGenre = await ArtistService.FilterByGenreAsync(_selectedGenreId.Value);
+            _artists = filteredByGenre
+                .Where(a => a.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+        else if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _artists = await ArtistService.SearchByNameAsync(_searchTerm);
+        }
+        else if (_selectedGenreId.HasValue)
+        {
+            _artists = await ArtistService.FilterByGenreAsync(_selectedGenreId.Value);
+        }
+        else
         {
             _artists = await ArtistService.GetAllEntitiesAsync();
         }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3wmIywDJImyj2VnKX06q90aZ7B9jK7wz+/VcpYp9qiM=",
+  "Hash": "MGrUPrvKHxJM0e3JZkQTT08Kpsz6ltiDtTi+HcAmx1k=",
   "Source": "ShowTime",
   "BasePath": "_content/ShowTime",
   "Mode": "Default",
@@ -224,25 +224,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/images/artists/avicii.jpeg"
-    },
-    {
-      "Identity": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/beach_please.png",
-      "SourceId": "ShowTime",
-      "SourceType": "Discovered",
-      "ContentRoot": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/",
-      "BasePath": "_content/ShowTime",
-      "RelativePath": "images/artists/beach_please.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/images/artists/beach_please.png"
     },
     {
       "Identity": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/artists/becky_g.jpeg",

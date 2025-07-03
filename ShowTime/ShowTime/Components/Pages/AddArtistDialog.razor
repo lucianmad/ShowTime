@@ -1,6 +1,7 @@
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IArtistService ArtistService
+@inject IGenreService GenreService
 @inject ISnackbar Snackbar
 @rendermode InteractiveServer
 
@@ -15,11 +16,20 @@
                           RequiredError="Name is required"
                           Class="mb-4"/>
 
-            <MudTextField @bind-Value="NewArtist.Genre"
-                          Label="Genre"
-                          Required="true"
-                          RequiredError="Genre is required"
-                          Class="mb-4"/>
+            <MudSelect @bind-Value="NewArtist.GenreId"
+                       Label="Genre"
+                       Required="true"
+                       RequiredError="Genre is required"
+                       Class="mb-4"
+                       Placeholder="Select a genre">
+                @if (_genres != null)
+                {
+                    @foreach (var genre in _genres)
+                    {
+                        <MudSelectItem Value="@genre.Id">@genre.Name</MudSelectItem>
+                    }
+                }
+            </MudSelect>
 
             <MudTextField @bind-Value="NewArtist.Image"
                           Label="Image URL"
@@ -50,9 +60,16 @@
     [SupplyParameterFromForm]
     private ArtistCreateDto NewArtist { get; set; } = new();
     
+    private IList<GenreGetDto>? _genres;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _genres = await GenreService.GetAllEntitiesAsync();
+    }
+
     private bool IsFormValid => 
         !string.IsNullOrWhiteSpace(NewArtist.Name) &&
-        !string.IsNullOrWhiteSpace(NewArtist.Genre);
+        NewArtist.GenreId != 0;
     
     private async Task Submit()
     {

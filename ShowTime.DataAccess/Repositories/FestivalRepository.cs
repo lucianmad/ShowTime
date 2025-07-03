@@ -1,5 +1,6 @@
 using ShowTime.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
+using ShowTime.DataAccess.Repositories.Abstractions;
 
 namespace ShowTime.DataAccess.Repositories;
 
@@ -24,13 +25,22 @@ public class FestivalRepository : GenericRepository<Festival>, IFestivalReposito
         }
     }
     
-    public async Task<IEnumerable<Festival>> GetAllByDate(DateTime date)
+    public async Task<IEnumerable<Festival>> FilterByDate(DateTime date)
     {
         return await _festivals.Where(f => f.StartDate >= date && date <= f.EndDate).ToListAsync();
     }
     
-    public async Task<IEnumerable<Festival>> GetAllByLocation(string location)
+    public async Task<IEnumerable<Festival>> FilterByLocation(int locationId)
     {
-        return await _festivals.Where(f => f.Location == location).ToListAsync();
+        return await _festivals
+            .Where(f => f.LocationId == locationId)
+            .ToListAsync();       
+    }
+
+    public async Task<IEnumerable<Festival>> SearchByName(string name)
+    {
+        return await _festivals
+            .Where(f => f.Name.Contains(name))
+            .ToListAsync();       
     }
 }

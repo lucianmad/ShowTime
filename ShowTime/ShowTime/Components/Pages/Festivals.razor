@@ -2,6 +2,7 @@
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IFestivalService FestivalService
+@inject ILocationService LocationService
 @inject IDialogService DialogService
 @rendermode InteractiveServer
 
@@ -17,6 +18,18 @@
         </MudItem>
     </MudGrid>
 
+    <MudGrid Class="mb-4" Spacing="2">
+        <MudItem xs="12" sm="6">
+            <MudTextField Value="_searchTerm"
+                          Label="Search by name"
+                          Variant="Variant.Filled"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true"
+                          ValueChanged="@((string value) => OnSearchChanged(value))"/>
+        </MudItem>
+    </MudGrid>
+    
     @if (_festivals.Count == 0)
     {
         <MudPaper Class="pa-4 text-center" Style="background-color: #f5f5f5;">
@@ -49,7 +62,7 @@
                         </div>
                         <MudCardContent Style="background: linear-gradient(135deg, #41267a 0%, #1a1a2e 100%);">
                             <MudText Typo="Typo.h6" Style="color: white; margin-bottom: 8px;">@festival.Name</MudText>
-                            <MudText Typo="Typo.body2" Style="color: #bdc3c7;">@festival.Location</MudText>
+                            <MudText Typo="Typo.body2" Style="color: #bdc3c7;">@festival.Location?.City, @festival.Location?.Country</MudText>
                             <MudText Typo="Typo.body2" Style="color: #bdc3c7;">@festival.StartDate?.ToShortDateString() - @festival.EndDate?.ToShortDateString()</MudText>
                             <MudText Typo="Typo.body2" Style="color: #bdc3c7;">Capacity: @festival.Capacity</MudText>
                         </MudCardContent>
@@ -62,9 +75,12 @@
 
 @code {
     private IList<FestivalGetDto> _festivals = new List<FestivalGetDto>();
+    private IList<LocationGetDto> _locations = new List<LocationGetDto>();
+    private string _searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        _locations = await LocationService.GetAllEntitiesAsync();
         _festivals = await FestivalService.GetAllEntitiesAsync();
     }
 
@@ -78,6 +94,7 @@
         if (result != null && !result.Canceled)
         {
             _festivals = await FestivalService.GetAllEntitiesAsync();
+            await ApplyFiltersAsync();
         }
     }
     
@@ -97,6 +114,7 @@
         if (result != null && !result.Canceled)
         {
             _festivals = await FestivalService.GetAllEntitiesAsync();
+            await ApplyFiltersAsync();
         }
     }
     
@@ -118,8 +136,25 @@
         if (result != null && !result.Canceled)
         {
             _festivals = await FestivalService.GetAllEntitiesAsync();
+            await ApplyFiltersAsync();
         }
     }
 
-    
+    private async Task OnSearchChanged(string newValue)
+    {
+        _searchTerm = newValue;
+        await ApplyFiltersAsync();
+    }
+
+    private async Task ApplyFiltersAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+        {
+            _festivals = await FestivalService.SearchByNameAsync(_searchTerm);
+        }
+        else
+        {
+            _festivals = await FestivalService.GetAllEntitiesAsync();
+        }
+    }
 }

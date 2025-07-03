@@ -15,6 +15,10 @@ public class ShowTimeDbContext : DbContext
     public DbSet<Lineup> Lineups { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Booking> Bookings { get; set; }
+    public DbSet<Location> Locations { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<Genre> Genres { get; set; }
+    public DbSet<TicketType> TicketTypes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

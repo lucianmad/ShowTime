@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ShowTime.DataAccess.Models;
+using ShowTime.DataAccess.Repositories.Abstractions;
 
 namespace ShowTime.DataAccess.Repositories;
 
@@ -24,8 +25,17 @@ public class ArtistRepository : GenericRepository<Artist>, IArtistRepository
         }
     }
 
-    public async Task<IEnumerable<Artist>> GetAllByGenre(string genre)
+    public async Task<IEnumerable<Artist>> FilterByGenre(int genreId)
     {
-        return await _artists.Where(a => a.Genre == genre).ToListAsync();
+        return await _artists
+            .Where(a => a.GenreId == genreId)
+            .ToListAsync();       
+    }
+
+    public async Task<IEnumerable<Artist>> SearchByName(string name)
+    {
+        return await _artists
+            .Where(a => a.Name.Contains(name))
+            .ToListAsync();       
     }
 }
