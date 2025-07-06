@@ -75,6 +75,53 @@ namespace ShowTime.DataAccess.Migrations
                     b.ToTable("Bookings", (string)null);
                 });
 
+            modelBuilder.Entity("ShowTime.DataAccess.Models.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Cities", (string)null);
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Countries", (string)null);
+                });
+
             modelBuilder.Entity("ShowTime.DataAccess.Models.Festival", b =>
                 {
                     b.Property<int>("Id")
@@ -86,11 +133,11 @@ namespace ShowTime.DataAccess.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -106,7 +153,7 @@ namespace ShowTime.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("CityId");
 
                     b.HasIndex("Name")
                         .IsUnique();
@@ -153,36 +200,13 @@ namespace ShowTime.DataAccess.Migrations
 
                     b.HasKey("FestivalId", "ArtistId");
 
-                    b.HasIndex("ArtistId", "FestivalId", "StartTime")
+                    b.HasIndex("ArtistId", "FestivalId")
+                        .IsUnique();
+
+                    b.HasIndex("ArtistId", "FestivalId", "StartTime", "Stage")
                         .IsUnique();
 
                     b.ToTable("Lineups", (string)null);
-                });
-
-            modelBuilder.Entity("ShowTime.DataAccess.Models.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("City")
-                        .IsUnique();
-
-                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Role", b =>
@@ -248,8 +272,8 @@ namespace ShowTime.DataAccess.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(511)
+                        .HasColumnType("nvarchar(511)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -302,15 +326,24 @@ namespace ShowTime.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ShowTime.DataAccess.Models.Festival", b =>
+            modelBuilder.Entity("ShowTime.DataAccess.Models.City", b =>
                 {
-                    b.HasOne("ShowTime.DataAccess.Models.Location", "Location")
-                        .WithMany("Festivals")
-                        .HasForeignKey("LocationId")
+                    b.HasOne("ShowTime.DataAccess.Models.Country", "Country")
+                        .WithMany("Cities")
+                        .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Location");
+                    b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Festival", b =>
+                {
+                    b.HasOne("ShowTime.DataAccess.Models.City", "City")
+                        .WithMany("Festivals")
+                        .HasForeignKey("CityId");
+
+                    b.Navigation("City");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Lineup", b =>
@@ -348,6 +381,16 @@ namespace ShowTime.DataAccess.Migrations
                     b.Navigation("Lineups");
                 });
 
+            modelBuilder.Entity("ShowTime.DataAccess.Models.City", b =>
+                {
+                    b.Navigation("Festivals");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.Country", b =>
+                {
+                    b.Navigation("Cities");
+                });
+
             modelBuilder.Entity("ShowTime.DataAccess.Models.Festival", b =>
                 {
                     b.Navigation("Bookings");
@@ -358,11 +401,6 @@ namespace ShowTime.DataAccess.Migrations
             modelBuilder.Entity("ShowTime.DataAccess.Models.Genre", b =>
                 {
                     b.Navigation("Artists");
-                });
-
-            modelBuilder.Entity("ShowTime.DataAccess.Models.Location", b =>
-                {
-                    b.Navigation("Festivals");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Role", b =>

@@ -1,35 +1,40 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">ShowTime</a>
-    </div>
-</div>
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthProvider
+@rendermode InteractiveServer
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
+<MudAppBar Elevation="4" Style="height: 70px; 
+                                background: linear-gradient(90deg, #0f0524 0%, #1a0a38 50%, #0f0524 100%);
+                                border-bottom: 2px solid #ff00ff;
+                                box-shadow: 0 0 15px #ff00ff, 0 0 30px #00ffff;">
+    <a href="/" class="me-4" style="text-decoration: none; color: inherit">
+        <MudText Typo="Typo.h6">SHOWTIME</MudText>
+    </a>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
+    <MudSpacer />
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+    <MudStack Row="true" Spacing="5" AlignItems="AlignItems.Center" Class="me-auto">
+        <a href="/" class="button1">Home</a>
+
+        <AuthorizeView Roles="Admin">
+            <MudNavLink Href="weather">Weather</MudNavLink>
+        </AuthorizeView>
+
+        <a href="/artists" class="button1">Artists</a>
+
+        <a href="/festivals" class="button1">Festivals</a>
+    
+        <AuthorizeView>
+            <Authorized>
+                <a href="/logout" class="button2 logout">Logout</a>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/login" class="button2">Login</a>
+            </NotAuthorized>
+        </AuthorizeView>
         
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="artists">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Artists
-            </NavLink>
-        </div>
-        
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="festivals">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Festivals
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    </MudStack>
+</MudAppBar>
+
+<MudSpacer />

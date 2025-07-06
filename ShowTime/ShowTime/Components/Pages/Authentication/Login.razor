@@ -1,0 +1,103 @@
+@page "/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Dtos
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject IHttpContextAccessor HttpContextAccessor
+@rendermode InteractiveServer 
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Class="pa-8" Elevation="4">
+        <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-6" Style="color: #6a1b9a;">
+            Login
+        </MudText>
+
+        <EditForm Model="LoginInfo" OnSubmit="Authenticate" FormName="LoginForm">
+            <MudTextField @bind-Value="LoginInfo.Email" 
+                          Label="Email Address"
+                          Required="true"
+                          RequiredError="Email is required"
+                          InputType="InputType.Email"
+                          Class="mb-4"
+                          Variant="Variant.Outlined"
+                          HelperText="Type the email for your account"/>
+
+            <MudTextField @bind-Value="LoginInfo.Password" 
+                          Label="Password"
+                          Required="true"
+                          RequiredError="Password is required"
+                          InputType="InputType.Password"
+                          Class="mb-4"
+                          Variant="Variant.Outlined"
+                          HelperText="Minimum 8 characters"/>
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Large"
+                       FullWidth="true"
+                       Class="mb-4"
+                       StartIcon="@Icons.Material.Filled.PersonAdd">
+                Login
+            </MudButton>
+            
+            <MudDivider Class="my-4" />
+
+            <MudText Align="Align.Center" Class="mb-2">
+                Don't have an account?
+                <MudLink Href="/register" Style="color: #6a1b9a;">
+                    Register here
+                </MudLink>
+            </MudText>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    [SupplyParameterFromForm] private LoginDto LoginInfo { get; set; } = new();
+
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+
+    private async Task Authenticate()
+    {
+        try
+        {
+            var response = await UserService.LoginAsync(LoginInfo);
+
+            if (response == null)
+            {
+                Console.WriteLine("Login failed: Invalid credentials or user not found.");
+                return;
+            }
+
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Email, response.Email),
+                new(ClaimTypes.Role, response.RoleName)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            var httpContext = HttpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                httpContext.Response.Redirect("/");
+            }
+            else
+            {
+                throw new Exception("HttpContext is null");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Login failed: {ex}");
+        }
+    }
+
+
+}

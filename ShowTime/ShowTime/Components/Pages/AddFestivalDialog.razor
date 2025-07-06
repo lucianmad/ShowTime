@@ -1,7 +1,8 @@
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IFestivalService FestivalService
-@inject ILocationService LocationService
+@inject ICountryService CountryService
+@inject ICityService CityService
 @inject ISnackbar Snackbar
 @rendermode InteractiveServer
 
@@ -15,52 +16,59 @@
                           Required="true"
                           RequiredError="Name is required"
                           Class="mb-4"/>
-            <MudSelect @bind-Value="SelectedCountry" 
-                       Label="Country" 
-                       Required="true" 
-                       RequiredError="Country is required" 
-                       Class="mb-4" 
-                       Placeholder="Select a country">
+            
+            <MudSelect @bind-Value="SelectedCountryId"
+                       Label="Country"
+                       Required="true"
+                       RequiredError="Country is required"
+                       Class="mb-4"
+                       Placeholder="Select a country"
+                       T="int?">
                 @if (_countries != null)
                 {
                     @foreach (var country in _countries)
                     {
-                        <MudSelectItem Value="@country">@country</MudSelectItem>
+                        <MudSelectItem Value="@country.Id" T="int?">@country.Name</MudSelectItem>
                     }
                 }
             </MudSelect>
 
-            <MudSelect @bind-Value="NewFestival.LocationId" 
+            <MudSelect @bind-Value="NewFestival.CityId" 
                        Label="City" 
                        Required="true" 
                        RequiredError="City is required" 
                        Class="mb-4" 
                        Placeholder="Select a city" 
-                       Disabled="@string.IsNullOrEmpty(SelectedCountry)">
-                @if (!string.IsNullOrEmpty(SelectedCountry) && _locations != null)
+                       Disabled="@(!SelectedCountryId.HasValue)"
+                       T="int?">
+                @if (SelectedCountryId.HasValue && _cities != null)
                 {
-                    @foreach (var location in _locations.Where(l => l.Country == SelectedCountry))
+                    @foreach (var city in _cities.Where(c => c.CountryId == SelectedCountryId.Value))
                     {
-                        <MudSelectItem Value="@location.Id">@location.City</MudSelectItem>
+                        <MudSelectItem Value="@city.Id" T="int?">@city.Name</MudSelectItem>
                     }
                 }
             </MudSelect>
+            
             <MudDatePicker @bind-Date="NewFestival.StartDate"
                            Label="Start Date"
                            DisplayMonths="2"
                            TitleDateFormat="dddd, dd MMMM"
                            Class="mb-6"
                            HelperText="Start Date is required"/>
+            
             <MudDatePicker @bind-Date="NewFestival.EndDate"
                            Label="End Date"
                            DisplayMonths="2"
                            TitleDateFormat="dddd, dd MMMM"
                            Class="mb-6"
                            HelperText="End Date is required"/>
+            
             <MudTextField @bind-Value="NewFestival.SplashArt"
                           Label="Splash Art"
                           Class="mb-6"
                           HelperText="Paste a direct image link"/>
+            
             <MudTextField @bind-Value="NewFestival.Capacity"
                           Label="Capacity"
                           Required="true"
@@ -85,42 +93,51 @@
         </div>
     </DialogActions>
 </MudDialog>
+
 @code {
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
+    
     [SupplyParameterFromForm]
     private FestivalCreateDto NewFestival { get; set; } = new();
-    private IList<LocationGetDto>? _locations;
-    private List<string>? _countries = new();
-    private string SelectedCountry { get; set; } = string.Empty;
+    
+    private IList<CountryGetDto>? _countries;
+    private IList<CityGetDto>? _cities;
+    private int? _selectedCountryId;
+    private int? SelectedCountryId 
+    { 
+        get => _selectedCountryId;
+        set 
+        {
+            if (_selectedCountryId != value)
+            {
+                _selectedCountryId = value;
+                NewFestival.CityId = null;
+                StateHasChanged();
+            }
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        _locations = await LocationService.GetAllEntitiesAsync();
-        if (_locations != null)
-        {
-            _countries = _locations.Select(l => l.Country).Distinct().OrderBy(c => c).ToList();
-        }
+        _countries = await CountryService.GetAllEntitiesAsync();
+        _cities = await CityService.GetAllEntitiesAsync();
     }
 
     private bool IsFormValid =>
         !string.IsNullOrWhiteSpace(NewFestival.Name) &&
-        NewFestival.LocationId != 0 &&
+        NewFestival.CityId.HasValue &&
+        NewFestival.CityId != 0 &&
         NewFestival is { StartDate: not null, EndDate: not null } &&
         NewFestival.StartDate <= NewFestival.EndDate &&
         NewFestival.Capacity > 0;
 
     public async Task Submit()
     {
-        await FestivalService.AddEntityAsync(NewFestival);
+        await FestivalService.AddEntityAsync(NewFestival); 
         Snackbar.Add("Festival successfully added", Severity.Success);
         MudDialog?.Close(DialogResult.Ok(true));
     }
 
     private void Cancel() => MudDialog?.Cancel();
-
-    //adaugat artisti in lineup la festival
-    //validari pe field uri la create si edit
-    //popup la delete
-    //filtrari (dupa start date end date etc)
 }

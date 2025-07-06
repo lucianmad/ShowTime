@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
 @* Required *@
 <MudThemeProvider @rendermode="InteractiveServer" />
@@ -8,20 +9,16 @@
 @* Needed for snackbars *@
 <MudSnackbarProvider @rendermode="InteractiveServer" />
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
+<div class="app-container">
+    <div class="fixed-background"></div>
+    <div class="content-overlay">
+        <NavMenu />
+        <MudLayout>
+            <MudMainContent Class="main-content">
+                @Body
+            </MudMainContent>
+        </MudLayout>
     </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
 </div>
 
 <div id="blazor-error-ui">

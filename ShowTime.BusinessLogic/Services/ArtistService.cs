@@ -62,4 +62,5 @@ public class ArtistService : GenericEntityService<Artist, ArtistGetDto, ArtistCr
         var artists = await _artistRepository.SearchByName(name);
         return artists.Select(MapToGetDto).ToList();   
     }
+    
 }

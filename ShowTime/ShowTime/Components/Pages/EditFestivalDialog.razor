@@ -1,78 +1,209 @@
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IFestivalService FestivalService
-@inject ILocationService LocationService
+@inject ICountryService CountryService
+@inject ICityService CityService
+@inject ILineupService LineupService
+@inject IArtistService ArtistService
+@inject ISnackbar Snackbar
 @rendermode InteractiveServer
 
 <MudDialog>
     <DialogContent>
         <MudText Typo="Typo.h4" Class="mb-6" Style="color: #6a1b9a;">Edit Festival</MudText>
-            
-        <EditForm Model="FestivalToEdit" OnValidSubmit="Submit">
-            <MudTextField @bind-Value="FestivalToEdit.Name" 
-                          Label="Festival Name" 
-                          Required="true"
-                          RequiredError="Name is required"
-                          Class="mb-4"/>
-            <MudSelect @bind-Value="SelectedCountry" 
-                       Label="Country" 
-                       Required="true" 
-                       RequiredError="Country is required" 
-                       Class="mb-4" 
-                       Placeholder="Select a country">
-                @if (_countries != null)
-                {
-                    @foreach (var country in _countries)
-                    {
-                        <MudSelectItem Value="@country">@country</MudSelectItem>
-                    }
-                }
-            </MudSelect>
+        
+        <MudTabs Elevation="4" Border="true" Color="Color.Primary">
+            <MudTabPanel Text="Festival Details">
+                <div class="pa-4">
+                    <EditForm Model="FestivalToEdit" OnValidSubmit="SubmitFestival">
+                        <MudTextField @bind-Value="FestivalToEdit.Name" 
+                                      Label="Festival Name" 
+                                      Required="true"
+                                      RequiredError="Name is required"
+                                      Class="mb-4"/>
+                        
+                        <MudSelect @bind-Value="SelectedCountryId"
+                                   Label="Country"
+                                   Required="true"
+                                   RequiredError="Country is required"
+                                   Class="mb-4"
+                                   Placeholder="Select a country"
+                                   T="int?">
+                            @if (_countries != null)
+                            {
+                                @foreach (var country in _countries)
+                                {
+                                    <MudSelectItem Value="@country.Id" T="int?">@country.Name</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
 
-            <MudSelect @bind-Value="FestivalToEdit.LocationId" 
-                       Label="City" 
-                       Required="true" 
-                       RequiredError="City is required" 
-                       Class="mb-4" 
-                       Placeholder="Select a city" 
-                       Disabled="@string.IsNullOrEmpty(SelectedCountry)">
-                @if (!string.IsNullOrEmpty(SelectedCountry) && _locations != null)
-                {
-                    @foreach (var location in _locations.Where(l => l.Country == SelectedCountry))
+                        <MudSelect @bind-Value="FestivalToEdit.CityId" 
+                                   Label="City" 
+                                   Required="true" 
+                                   RequiredError="City is required" 
+                                   Class="mb-4" 
+                                   Placeholder="Select a city" 
+                                   Disabled="@(!SelectedCountryId.HasValue)"
+                                   T="int?">
+                            @if (SelectedCountryId.HasValue && _cities != null)
+                            {
+                                @foreach (var city in _cities.Where(c => c.CountryId == SelectedCountryId.Value))
+                                {
+                                    <MudSelectItem Value="@city.Id" T="int?">@city.Name</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                        
+                        <MudDatePicker @bind-Date="FestivalToEdit.StartDate"
+                                       Label="Start Date" 
+                                       DisplayMonths="2" 
+                                       TitleDateFormat="dddd, dd MMMM"  
+                                       Class="mb-6"
+                                       HelperText="Start Date is required"/>
+                        
+                        <MudDatePicker @bind-Date="FestivalToEdit.EndDate"
+                                       Label="End Date" 
+                                       DisplayMonths="2" 
+                                       TitleDateFormat="dddd, dd MMMM"  
+                                       Class="mb-6"
+                                       HelperText="End Date is required"/>
+                        
+                        <MudTextField @bind-Value="FestivalToEdit.SplashArt" 
+                                      Label="Splash Art" 
+                                      Class="mb-6"
+                                      HelperText="Paste a direct image link"/>
+                        
+                        <MudTextField @bind-Value="FestivalToEdit.Capacity"   
+                                      Label="Capacity" 
+                                      Required="true"
+                                      RequiredError="Capacity is required"
+                                      Class="mb-4"/>
+                    </EditForm>
+                </div>
+            </MudTabPanel>
+            
+            <MudTabPanel Text="Lineup Management">
+                <div class="pa-4">
+                    <MudText Typo="Typo.h5" Class="mb-4">Manage Lineup</MudText>
+                    
+                    <MudCard Class="mb-4">
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6" Class="mb-3">Add Artist to Lineup</MudText>
+                            <MudGrid>
+                                <MudItem xs="12" sm="6">
+                                    <MudSelect @bind-Value="_selectedArtistId" 
+                                               Label="Artist" 
+                                               Placeholder="Select an artist"
+                                               T="int?">
+                                        @if (_artists != null)
+                                        {
+                                            @foreach (var artist in _artists)
+                                            {
+                                                <MudSelectItem Value="@artist.Id" T="int?">@artist.Name</MudSelectItem>
+                                            }
+                                        }
+                                    </MudSelect>
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
+                                    <MudTextField @bind-Value="_newLineupStage" 
+                                                  Label="Stage" 
+                                                  Placeholder="Main Stage, Second Stage, etc."/>
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
+                                    <MudTimePicker @bind-Time="_newLineupTime" 
+                                                   Label="Start Time" 
+                                                   AmPm="false"/>
+                                </MudItem>
+                                <MudItem xs="12" sm="6" Class="d-flex align-center">
+                                    <MudButton Color="Color.Primary" 
+                                               Variant="Variant.Filled" 
+                                               @onclick="AddToLineup"
+                                               Disabled="@(!CanAddToLineup)">
+                                        Add to Lineup
+                                    </MudButton>
+                                </MudItem>
+                            </MudGrid>
+                        </MudCardContent>
+                    </MudCard>
+
+                    <MudCard>
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6" Class="mb-3">Current Lineup</MudText>
+                            @if (_lineup != null && _lineup.Any())
+                            {
+                                <MudTable Items="_lineup.OrderBy(l => l.StartTime)" Hover="true" Dense="true">
+                                    <HeaderContent>
+                                        <MudTh>Artist</MudTh>
+                                        <MudTh>Stage</MudTh>
+                                        <MudTh>Start Time</MudTh>
+                                        <MudTh>Actions</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd DataLabel="Artist">@context.ArtistName</MudTd>
+                                        <MudTd DataLabel="Stage">@context.Stage</MudTd>
+                                        <MudTd DataLabel="Start Time">@context.StartTime.ToString("HH:mm")</MudTd>
+                                        <MudTd DataLabel="Actions">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+                                                           Color="Color.Primary" 
+                                                           Size="Size.Small"
+                                                           @onclick="@(() => StartEditLineup(context))"/>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                                           Color="Color.Error" 
+                                                           Size="Size.Small"
+                                                           @onclick="@(() => RemoveFromLineup(context))"/>
+                                        </MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            }
+                            else
+                            {
+                                <MudText Color="Color.Default">No artists in lineup yet.</MudText>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+
+                    @if (_editingLineup != null)
                     {
-                        <MudSelectItem Value="@location.Id">@location.City</MudSelectItem>
+                        <MudCard Class="mt-4">
+                            <MudCardContent>
+                                <MudText Typo="Typo.h6" Class="mb-3">Edit Lineup Item - @_editingLineup.ArtistName</MudText>
+                                <MudGrid>
+                                    <MudItem xs="12" sm="6">
+                                        <MudTextField @bind-Value="_editLineupStage" 
+                                                      Label="Stage"/>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
+                                        <MudTimePicker @bind-Time="_editLineupTime" 
+                                                       Label="Start Time" 
+                                                       AmPm="false"/>
+                                    </MudItem>
+                                    <MudItem xs="12" Class="d-flex gap-2">
+                                        <MudButton Color="Color.Success" 
+                                                   Variant="Variant.Filled" 
+                                                   @onclick="SaveLineupEdit">
+                                            Save Changes
+                                        </MudButton>
+                                        <MudButton Color="Color.Default" 
+                                                   Variant="Variant.Outlined" 
+                                                   @onclick="CancelLineupEdit">
+                                            Cancel
+                                        </MudButton>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudCardContent>
+                        </MudCard>
                     }
-                }
-            </MudSelect>
-            <MudDatePicker @bind-Date="FestivalToEdit.StartDate"
-                           Label="Start Date" 
-                           DisplayMonths="2" 
-                           TitleDateFormat="dddd, dd MMMM"  
-                           Class="mb-6"
-                           HelperText="Start Date is required"/>
-            <MudDatePicker @bind-Date="FestivalToEdit.EndDate"
-                           Label="End Date" 
-                           DisplayMonths="2" 
-                           TitleDateFormat="dddd, dd MMMM"  
-                           Class="mb-6"
-                           HelperText="End Date is required"/>
-            <MudTextField @bind-Value="FestivalToEdit.SplashArt" 
-                          Label="Splash Art" 
-                          Class="mb-6"
-                          HelperText="Paste a direct image link"/>
-            <MudTextField @bind-Value="FestivalToEdit.Capacity"   
-                          Label="Capacity" 
-                          Required="true"
-                          RequiredError="Capacity is required"
-                          Class="mb-4"/>
-        </EditForm>
+                </div>
+            </MudTabPanel>
+        </MudTabs>
     </DialogContent>
     <DialogActions>
         <div class="d-flex justify-end gap-4">
             <MudButton @onclick="Cancel">Cancel</MudButton>
             <MudButton Color="Color.Primary" 
-                       @onclick="Submit"
-                       Disabled="@(!IsFormValid)">OK</MudButton>
+                       @onclick="SubmitFestival"
+                       Disabled="@(!IsFormValid)">Save Festival</MudButton>
         </div>
     </DialogActions>
 </MudDialog>
@@ -83,47 +214,208 @@
     
     [Parameter]
     public int FestivalId { get; set; }
+    
     private FestivalCreateDto FestivalToEdit { get; set; } = new();
-    private IList<LocationGetDto>? _locations;
-    private IList<string>? _countries;
-    private string? SelectedCountry;
+    private IList<CountryGetDto>? _countries;
+    private IList<CityGetDto>? _cities;
+    private IList<ArtistGetDto>? _artists;
+    private IList<LineupGetDto>? _lineup;
+    
+    private int? _selectedCountryId;
+    private int? SelectedCountryId 
+    { 
+        get => _selectedCountryId;
+        set 
+        {
+            if (_selectedCountryId != value)
+            {
+                _selectedCountryId = value;
+                FestivalToEdit.CityId = null;
+                StateHasChanged();
+            }
+        }
+    }
+    
+    private int? _selectedArtistId;
+    private string _newLineupStage = string.Empty;
+    private TimeSpan? _newLineupTime;
+    
+    private LineupGetDto? _editingLineup;
+    private string _editLineupStage = string.Empty;
+    private TimeSpan? _editLineupTime;
     
     protected override async Task OnInitializedAsync()
     {
-        var festival = await FestivalService.GetEntityByIdAsync(FestivalId);
-        _locations = await LocationService.GetAllEntitiesAsync();
-        _countries = _locations?.Select(l => l.Country).OrderBy(c => c).ToList();
+        try
+        {
+            var festival = await FestivalService.GetEntityByIdAsync(FestivalId);
+            _countries = await CountryService.GetAllEntitiesAsync();
+            _cities = await CityService.GetAllEntitiesAsync();
+            _artists = await ArtistService.GetAllEntitiesAsync();
+            _lineup = (await LineupService.GetLineupAsync(FestivalId)).ToList();
 
-        FestivalToEdit = new FestivalCreateDto
+            FestivalToEdit = new FestivalCreateDto
+            {
+                Name = festival.Name,
+                CityId = festival.CityId,
+                StartDate = festival.StartDate,
+                EndDate = festival.EndDate,
+                SplashArt = festival.SplashArt,
+                Capacity = festival.Capacity
+            };
+            
+            if (festival.CityId.HasValue && _cities != null)
+            {
+                var city = _cities.FirstOrDefault(c => c.Id == festival.CityId.Value);
+                if (city != null)
+                {
+                    SelectedCountryId = city.CountryId;
+                }
+            }
+        }
+        catch (Exception ex)
         {
-            Name = festival.Name,
-            LocationId = festival.LocationId,
-            StartDate = festival.StartDate,
-            EndDate = festival.EndDate,
-            SplashArt = festival.SplashArt,
-            Capacity = festival.Capacity
-        };
-        
-        var location = _locations?.FirstOrDefault(l => l.Id == FestivalToEdit.LocationId);
-        if (location != null)
-        {
-            SelectedCountry = location.Country;
+            Snackbar.Add($"Error loading festival: {ex.Message}", Severity.Error);
         }
     }
     
     private bool IsFormValid =>
         !string.IsNullOrWhiteSpace(FestivalToEdit.Name) &&
-        FestivalToEdit.LocationId != 0 &&
+        FestivalToEdit.CityId.HasValue &&
+        FestivalToEdit.CityId != 0 &&
         FestivalToEdit is { StartDate: not null, EndDate: not null } &&
         FestivalToEdit.StartDate <= FestivalToEdit.EndDate &&
         FestivalToEdit.Capacity > 0;
     
-    private async Task Submit()
+    private bool CanAddToLineup =>
+        _selectedArtistId.HasValue &&
+        !string.IsNullOrWhiteSpace(_newLineupStage) &&
+        _newLineupTime.HasValue;
+    
+    private async Task SubmitFestival()
     {
-        await FestivalService.UpdateEntityAsync(FestivalId, FestivalToEdit);
-        MudDialog?.Close(DialogResult.Ok(true));
+        try
+        {
+            await FestivalService.UpdateEntityAsync(FestivalId, FestivalToEdit);
+            Snackbar.Add("Festival successfully updated", Severity.Success);
+            MudDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error updating festival: {ex.Message}", Severity.Error);
+        }
     }
-    private void Cancel() => MudDialog?.Cancel();
+    
+    private async Task AddToLineup()
+    {
+        if (!CanAddToLineup) return;
+        
+        try
+        {
+            var lineupCreateDto = new LineupCreateDto
+            {
+                FestivalId = FestivalId,
+                ArtistId = _selectedArtistId!.Value,
+                Stage = _newLineupStage,
+                StartTime = DateTime.Today.Add(_newLineupTime!.Value)
+            };
 
-
+            await LineupService.AddToLineupAsync(lineupCreateDto);
+            _lineup = (await LineupService.GetLineupAsync(FestivalId)).ToList();
+            
+            _selectedArtistId = null;
+            _newLineupStage = string.Empty;
+            _newLineupTime = null;
+            
+            Snackbar.Add("Artist added to lineup successfully", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error adding artist to lineup: {ex.Message}", Severity.Error);
+        }
+    }
+    
+    private void StartEditLineup(LineupGetDto lineup)
+    {
+        _editingLineup = lineup;
+        _editLineupStage = lineup.Stage;
+        _editLineupTime = lineup.StartTime.TimeOfDay;
+        StateHasChanged();
+    }
+    
+    private async Task SaveLineupEdit()
+    {
+        if (_editingLineup == null || _editLineupTime == null) return;
+        
+        try
+        {
+            var artist = _artists?.FirstOrDefault(a => a.Name == _editingLineup.ArtistName);
+            if (artist == null)
+            {
+                Snackbar.Add("Artist not found", Severity.Error);
+                return;
+            }
+            
+            var lineupUpdateDto = new LineupCreateDto
+            {
+                FestivalId = FestivalId,
+                ArtistId = artist.Id,
+                Stage = _editLineupStage,
+                StartTime = DateTime.Today.Add(_editLineupTime.Value)
+            };
+            
+            await LineupService.UpdateLineupAsync(lineupUpdateDto);
+            
+            _lineup = (await LineupService.GetLineupAsync(FestivalId)).ToList();
+            
+            _editingLineup = null;
+            _editLineupStage = string.Empty;
+            _editLineupTime = null;
+            
+            Snackbar.Add("Lineup updated successfully", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error updating lineup: {ex.Message}", Severity.Error);
+        }
+    }
+    
+    private void CancelLineupEdit()
+    {
+        _editingLineup = null;
+        _editLineupStage = string.Empty;
+        _editLineupTime = null;
+        StateHasChanged();
+    }
+    
+    private async Task RemoveFromLineup(LineupGetDto lineup)
+    {
+        try
+        {
+            var artist = _artists?.FirstOrDefault(a => a.Name == lineup.ArtistName);
+            if (artist == null)
+            {
+                Snackbar.Add("Artist not found", Severity.Error);
+                return;
+            }
+            
+            await LineupService.RemoveFromLineupAsync(FestivalId, artist.Id);
+            
+            _lineup = (await LineupService.GetLineupAsync(FestivalId)).ToList();
+            
+            Snackbar.Add("Artist removed from lineup successfully", Severity.Success);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error removing artist from lineup: {ex.Message}", Severity.Error);
+        }
+    }
+    
+    private void Cancel()
+    {
+        MudDialog?.Cancel();
+    }
 }

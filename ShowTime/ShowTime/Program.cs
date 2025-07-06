@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using ShowTime.BusinessLogic.Abstractions;
@@ -16,14 +18,35 @@ var connectionString = builder.Configuration.GetConnectionString("ShowTimeContex
 builder.Services.AddDbContext<ShowTimeDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "auth-token";
+        options.LoginPath = "/login";
+        options.AccessDeniedPath = "/access-denied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddTransient<IArtistRepository, ArtistRepository>();
 builder.Services.AddTransient<IFestivalRepository, FestivalRepository>();
 builder.Services.AddTransient<IGenreRepository, GenreRepository>();
-builder.Services.AddTransient<ILocationRepository, LocationRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<ICityRepository, CityRepository>();
+builder.Services.AddTransient<ICountryRepository, CountryRepository>();
+builder.Services.AddTransient<ILineupRepository, LineupRepository>();
+
 builder.Services.AddTransient<IArtistService, ArtistService>();
 builder.Services.AddTransient<IFestivalService, FestivalService>();
 builder.Services.AddTransient<IGenreService, GenreService>();
-builder.Services.AddTransient<ILocationService, LocationService>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ICityService, CityService>();
+builder.Services.AddTransient<ICountryService, CountryService>();
+builder.Services.AddTransient<ILineupService, LineupService>();
+builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddMudServices();
 
@@ -48,7 +71,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

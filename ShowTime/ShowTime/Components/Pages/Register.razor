@@ -1,0 +1,106 @@
+@page "/register"
+@using ShowTime.BusinessLogic.Dtos
+@using ShowTime.BusinessLogic.Abstractions
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@rendermode InteractiveServer
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Class="pa-8" Elevation="4">
+        <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-6" Style="color: #6a1b9a;">
+            Create Your Account
+        </MudText>
+
+        <EditForm Model="RegisterDto" OnValidSubmit="RegisterUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <MudTextField @bind-Value="RegisterDto.Email" 
+                          Label="Email Address"
+                          Required="true"
+                          InputType="InputType.Email"
+                          Class="mb-4"
+                          Variant="Variant.Outlined"
+                          HelperText="Type the email for your account" />
+
+            <MudTextField @bind-Value="RegisterDto.Password" 
+                          Label="Password"
+                          Required="true"
+                          InputType="InputType.Password"
+                          Class="mb-4"
+                          Variant="Variant.Outlined"
+                          HelperText="Minimum 8 characters" />
+
+            <MudTextField @bind-Value="RegisterDto.ConfirmPassword" 
+                          Label="Confirm Password"
+                          Required="true"
+                          InputType="InputType.Password"
+                          Class="mb-4"
+                          Variant="Variant.Outlined" />
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Large"
+                       FullWidth="true"
+                       Class="mb-4"
+                       StartIcon="@Icons.Material.Filled.PersonAdd"
+                       Disabled="@_isLoading">
+                @if (_isLoading)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Creating Account...</MudText>
+                }
+                else
+                {
+                    <MudText>Create Account</MudText>
+                }
+            </MudButton>
+
+            <MudDivider Class="my-4" />
+
+            <MudText Align="Align.Center" Class="mb-2">
+                Already have an account?
+                <MudLink Href="/login" Style="color: #6a1b9a;">
+                    Sign in here
+                </MudLink>
+            </MudText>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private RegisterDto RegisterDto = new();
+    private bool _isLoading = false;
+
+    private async Task RegisterUser()
+    {
+        _isLoading = true;
+        try
+        {
+            await UserService.RegisterAsync(RegisterDto);
+            
+            Snackbar.Add("Account created successfully! Please sign in.", Severity.Success);
+            
+            NavigationManager.NavigateTo("/login");
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("already exists") || ex.Message.Contains("duplicate"))
+        {
+            Snackbar.Add("An account with this email already exists. Please use a different email or sign in.", Severity.Error);
+        }
+        catch (ArgumentException ex) when (ex.Message.Contains("email"))
+        {
+            Snackbar.Add("Please enter a valid email address.", Severity.Warning);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Registration failed: {ex.Message}", Severity.Error);
+            Console.WriteLine($"Registration failed: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

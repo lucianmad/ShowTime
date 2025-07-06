@@ -49,3 +49,196 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+/* Neon Title Styling */
+.neon-title {
+    color: #00ffff !important;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+    font-weight: bold !important;
+    letter-spacing: 2px;
+}
+
+/* Neon Button Styling */
+.neon-button {
+    background: transparent !important;
+    border: 2px solid #00ffff !important;
+    color: #00ffff !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
+    font-size: 12px !important;
+    margin-bottom: 16px !important;
+}
+
+.neon-button:hover {
+    background: rgba(0, 255, 255, 0.1) !important;
+    box-shadow: 0 0 10px #00ffff !important;
+}
+
+.button-text {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+/* Search Filters Container */
+.search-filters {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Input Wrapper */
+.input-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* Custom Search Input */
+.custom-search {
+    width: 100%;
+    padding: 12px 12px 12px 44px;
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid #00ffff;
+    border-radius: 4px;
+    color: #00ffff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.custom-search:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    border-color: #00ffff;
+}
+
+.custom-search::placeholder {
+    color: rgba(0, 255, 255, 0.6);
+}
+
+/* Select Wrapper */
+.select-wrapper {
+    position: relative;
+    min-width: 200px;
+}
+
+.custom-select {
+    width: 100%;
+    padding: 12px 32px 12px 12px;
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid #00ffff;
+    border-radius: 4px;
+    color: #00ffff;
+    font-size: 14px;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.custom-select:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    border-color: #00ffff;
+}
+
+.custom-select option {
+    background: #1a1a2e;
+    color: #00ffff;
+    padding: 8px;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00ffff;
+    pointer-events: none;
+    font-size: 12px;
+}
+
+/* Card Title */
+.neon-card-title {
+    color: #00ffff !important;
+    text-shadow: 0 0 5px #00ffff;
+    font-weight: 600 !important;
+}
+
+/* Card Text */
+.neon-card-text {
+    color: #bdc3c7 !important;
+}
+
+/* Lineup Section Styles (for festivals page compatibility) */
+.lineup-section {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.lineup-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #00ffff;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.lineup-toggle:hover {
+    color: #ffffff;
+}
+
+.lineup-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lineup-artist {
+    color: #00ffff;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.lineup-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 11px;
+    color: #bdc3c7;
+}
+
+.no-lineup-text {
+    color: rgba(189, 195, 199, 0.6) !important;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .search-filters {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .input-wrapper,
+    .select-wrapper {
+        min-width: 100%;
+    }
+
+    .neon-title {
+        font-size: 1.5rem !important;
+    }
+}

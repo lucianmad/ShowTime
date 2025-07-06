@@ -22,8 +22,8 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
         {
             Id = festival.Id,
             Name = festival.Name,
-            Location = festival.Location,
-            LocationId = festival.LocationId,
+            City = festival.City,
+            CityId = festival.CityId,
             StartDate = festival.StartDate,
             EndDate = festival.EndDate,
             SplashArt = festival.SplashArt,
@@ -36,7 +36,7 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
         return new Festival
         {
             Name = festivalCreateDto.Name,
-            LocationId = festivalCreateDto.LocationId,
+            CityId = festivalCreateDto.CityId,
             StartDate = festivalCreateDto.StartDate,
             EndDate = festivalCreateDto.EndDate,
             SplashArt = festivalCreateDto.SplashArt,
@@ -50,7 +50,7 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
         {
             Id = id,
             Name = festivalCreateDto.Name,
-            LocationId = festivalCreateDto.LocationId,
+            CityId = festivalCreateDto.CityId,
             StartDate = festivalCreateDto.StartDate,
             EndDate = festivalCreateDto.EndDate,
             SplashArt = festivalCreateDto.SplashArt,
@@ -58,16 +58,22 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
         };
     }
 
-    public async Task<List<FestivalGetDto>> FilterByLocationAsync(int locationId)
+    public async Task<List<FestivalGetDto>> FilterByCityAsync(int cityId)
     {
-        var festivals = await _festivalRepository.FilterByLocation(locationId);
-        return festivals.Select(MapToGetDto).ToList();   
+        var festivals = await _festivalRepository.FilterByCity(cityId);
+        return festivals.Select(MapToGetDto).ToList();  
     }
     
     public async Task<List<FestivalGetDto>> FilterByDateAsync(DateTime date)
     {
         var festivals = await _festivalRepository.FilterByDate(date);
-        return festivals.Select(MapToGetDto).ToList();   
+        return festivals.Select(MapToGetDto).ToList(); 
+    }
+    
+    public async Task<List<FestivalGetDto>> FilterByCountryAsync(int countryId)
+    {
+        var festivals = await _festivalRepository.FilterByCountry(countryId);
+        return festivals.Select(MapToGetDto).ToList(); 
     }
     
     public async Task<List<FestivalGetDto>> SearchByNameAsync(string name)
@@ -75,4 +81,5 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
         var festivals = await _festivalRepository.SearchByName(name);
         return festivals.Select(MapToGetDto).ToList();  
     }
+    
 }

@@ -1,34 +1,58 @@
 @page "/festivals"
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
+@using ShowTime.DataAccess.Models
 @inject IFestivalService FestivalService
-@inject ILocationService LocationService
+@inject ICityService CityService
+@inject ICountryService CountryService
+@inject ILineupService LineupService
 @inject IDialogService DialogService
 @rendermode InteractiveServer
 
+
 <MudContainer>
     <MudGrid Justify="Justify.SpaceBetween">
-        <MudItem>
-            <MudText Typo="Typo.h4" Class="mb-4" Style="color: #6a1b9a; font-weight: 600;">Festivals Page</MudText>
-        </MudItem>
-        <MudItem>
-            <MudButton Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       @onclick="@(AddFestivalAsync)">Add festival</MudButton>
-        </MudItem>
+        <MudText Typo="Typo.h4" Class="mb-4 neon-title">FESTIVALS</MudText>
+
+        <MudButton Class="neon-button"
+                   Variant="Variant.Text"
+                   @onclick="@(AddFestivalAsync)">
+            <span class="button-text">ADD FESTIVAL</span>
+        </MudButton>
     </MudGrid>
 
-    <MudGrid Class="mb-4" Spacing="2">
-        <MudItem xs="12" sm="6">
-            <MudTextField Value="_searchTerm"
-                          Label="Search by name"
-                          Variant="Variant.Filled"
-                          Adornment="Adornment.Start"
-                          AdornmentIcon="@Icons.Material.Filled.Search"
-                          Immediate="true"
-                          ValueChanged="@((string value) => OnSearchChanged(value))"/>
-        </MudItem>
-    </MudGrid>
+   
+    <div class="search-filters">
+        <div class="input-wrapper">
+            <span class="search-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#00ffff">
+                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </span>
+            <InputText @bind-Value="_searchTerm" 
+                       @bind-Value:after="ApplyFiltersAsync"
+                       class="custom-search"
+                       placeholder="Search by name" />
+        </div>
+
+        <div class="select-wrapper">
+            <InputSelect @bind-Value="_selectedCountryId" 
+                         @bind-Value:after="ApplyFiltersAsync"
+                         class="custom-select">
+                <option value="">All Countries</option>
+                @if (_countries != null)
+                {
+                    @foreach (var country in _countries)
+                    {
+                        <option value="@country.Id">@country.Name</option>
+                    }
+                }
+            </InputSelect>
+            <span class="select-arrow">▼</span>
+        </div>
+    </div>
+
+    
     
     @if (_festivals.Count == 0)
     {
@@ -60,11 +84,44 @@
                                                @onclick="@(() => DeleteFestivalAsync(festival.Id))"/>
                             </div>
                         </div>
-                        <MudCardContent Style="background: linear-gradient(135deg, #41267a 0%, #1a1a2e 100%);">
-                            <MudText Typo="Typo.h6" Style="color: white; margin-bottom: 8px;">@festival.Name</MudText>
-                            <MudText Typo="Typo.body2" Style="color: #bdc3c7;">@festival.Location?.City, @festival.Location?.Country</MudText>
-                            <MudText Typo="Typo.body2" Style="color: #bdc3c7;">@festival.StartDate?.ToShortDateString() - @festival.EndDate?.ToShortDateString()</MudText>
-                            <MudText Typo="Typo.body2" Style="color: #bdc3c7;">Capacity: @festival.Capacity</MudText>
+                        <MudCardContent Style="background: linear-gradient(135deg, #41267a 0%, #1a1a2e 100%); min-height: 160px;">
+                            <MudText Typo="Typo.h6" Class="neon-card-title" Style="margin-bottom: 8px;">@festival.Name</MudText>
+                            <MudText Typo="Typo.body2" Class="neon-card-text">@festival.City?.Name, @festival.City?.Country?.Name</MudText>
+                            <MudText Typo="Typo.body2" Class="neon-card-text">@festival.StartDate?.ToShortDateString() - @festival.EndDate?.ToShortDateString()</MudText>
+                            <MudText Typo="Typo.body2" Class="neon-card-text">Capacity: @festival.Capacity</MudText>
+                            
+                            @if (_festivalLineups.ContainsKey(festival.Id) && _festivalLineups[festival.Id].Any())
+                            {
+                                <div class="lineup-section">
+                                    <div class="lineup-toggle" @onclick="@(() => ToggleLineupVisibility(festival.Id))">
+                                        <MudIcon Icon="@(_lineupVisibility.GetValueOrDefault(festival.Id) ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)" 
+                                                 Size="Size.Small" />
+                                        <span>Lineup (@_festivalLineups[festival.Id].Count())</span>
+                                    </div>
+                                    
+                                    @if (_lineupVisibility.GetValueOrDefault(festival.Id))
+                                    {
+                                        <div style="max-height: 120px; overflow-y: auto;">
+                                            @foreach (var lineup in _festivalLineups[festival.Id].OrderBy(l => l.StartTime))
+                                            {
+                                                <div class="lineup-item">
+                                                    <span class="lineup-artist">@lineup.ArtistName</span>
+                                                    <div class="lineup-details">
+                                                        <div>@lineup.Stage</div>
+                                                        <div>@lineup.StartTime.ToString("HH:mm")</div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="lineup-section">
+                                    <MudText Typo="Typo.body2" Class="no-lineup-text">No lineup available</MudText>
+                                </div>
+                            }
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
@@ -75,13 +132,44 @@
 
 @code {
     private IList<FestivalGetDto> _festivals = new List<FestivalGetDto>();
-    private IList<LocationGetDto> _locations = new List<LocationGetDto>();
+    private IList<FestivalGetDto> _allFestivals = new List<FestivalGetDto>();
+    private IList<CountryGetDto> _countries = new List<CountryGetDto>();
+    private IList<CityGetDto> _cities = new List<CityGetDto>();
+    private Dictionary<int, IEnumerable<LineupGetDto>> _festivalLineups = new();
+    private Dictionary<int, bool> _lineupVisibility = new();
     private string _searchTerm = string.Empty;
+    private int? _selectedCountryId = null;
 
     protected override async Task OnInitializedAsync()
     {
-        _locations = await LocationService.GetAllEntitiesAsync();
-        _festivals = await FestivalService.GetAllEntitiesAsync();
+        _cities = await CityService.GetAllEntitiesAsync();
+        _countries = await CountryService.GetAllEntitiesAsync();
+        _allFestivals = await FestivalService.GetAllEntitiesAsync();
+        _festivals = _allFestivals;
+        
+        await LoadLineupsAsync();
+    }
+
+    private async Task LoadLineupsAsync()
+    {
+        _festivalLineups.Clear();
+        foreach (var festival in _allFestivals)
+        {
+            try
+            {
+                var lineup = await LineupService.GetLineupAsync(festival.Id);
+                _festivalLineups[festival.Id] = lineup;
+            }
+            catch
+            {
+                _festivalLineups[festival.Id] = new List<LineupGetDto>();
+            }
+        }
+    }
+
+    private void ToggleLineupVisibility(int festivalId)
+    {
+        _lineupVisibility[festivalId] = !_lineupVisibility.GetValueOrDefault(festivalId);
     }
 
     private async Task AddFestivalAsync()
@@ -93,7 +181,8 @@
 
         if (result != null && !result.Canceled)
         {
-            _festivals = await FestivalService.GetAllEntitiesAsync();
+            _allFestivals = await FestivalService.GetAllEntitiesAsync();
+            await LoadLineupsAsync();
             await ApplyFiltersAsync();
         }
     }
@@ -105,15 +194,15 @@
             { "FestivalId", id }
         };
 
-        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth = true };
 
         var dialogReference = await DialogService.ShowAsync<EditFestivalDialog>("Edit Festival", parameters, options);
         var result = await dialogReference.Result;
 
-
         if (result != null && !result.Canceled)
         {
-            _festivals = await FestivalService.GetAllEntitiesAsync();
+            _allFestivals = await FestivalService.GetAllEntitiesAsync();
+            await LoadLineupsAsync();
             await ApplyFiltersAsync();
         }
     }
@@ -135,26 +224,27 @@
 
         if (result != null && !result.Canceled)
         {
-            _festivals = await FestivalService.GetAllEntitiesAsync();
+            _allFestivals = await FestivalService.GetAllEntitiesAsync();
+            await LoadLineupsAsync();
             await ApplyFiltersAsync();
         }
     }
 
-    private async Task OnSearchChanged(string newValue)
+    private Task ApplyFiltersAsync()
     {
-        _searchTerm = newValue;
-        await ApplyFiltersAsync();
-    }
+        IEnumerable<FestivalGetDto> filtered = _allFestivals;
 
-    private async Task ApplyFiltersAsync()
-    {
+        if (_selectedCountryId.HasValue)
+        {
+            filtered = filtered.Where(f => f.City?.CountryId == _selectedCountryId.Value);
+        }
+
         if (!string.IsNullOrWhiteSpace(_searchTerm))
         {
-            _festivals = await FestivalService.SearchByNameAsync(_searchTerm);
+            filtered = filtered.Where(f => f.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase));
         }
-        else
-        {
-            _festivals = await FestivalService.GetAllEntitiesAsync();
-        }
+
+        _festivals = filtered.ToList();
+        return Task.CompletedTask;
     }
 }

@@ -1,0 +1,28 @@
+@page "/access-denied"
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<div class="access-denied-container">
+    <div class="neon-card">
+        <div class="neon-border"></div>
+        <div class="content">
+            <h1 class="neon-text">ACCESS DENIED</h1>
+            <p class="subtext">You don't have permission to view this page</p>
+            
+            <div class="button-container">
+                <button @onclick="GoHome" class="neon-button">
+                    <span class="button-text">RETURN HOME</span>
+                    <span class="button-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void GoHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+}

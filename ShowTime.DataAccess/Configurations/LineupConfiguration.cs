@@ -13,6 +13,7 @@ public class LineupConfiguration : IEntityTypeConfiguration<Lineup>
         builder.Property(l => l.StartTime).IsRequired();
         builder.Property(l => l.Stage).IsRequired().HasMaxLength(100);
         
-        builder.HasIndex(l => new {l.ArtistId, l.FestivalId, l.StartTime}).IsUnique();
+        builder.HasIndex(l => new {l.ArtistId, l.FestivalId}).IsUnique();
+        builder.HasIndex(l => new {l.ArtistId, l.FestivalId, l.StartTime, l.Stage}).IsUnique();
     }
 }

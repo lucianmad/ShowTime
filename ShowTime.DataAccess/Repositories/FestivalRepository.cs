@@ -30,10 +30,19 @@ public class FestivalRepository : GenericRepository<Festival>, IFestivalReposito
         return await _festivals.Where(f => f.StartDate >= date && date <= f.EndDate).ToListAsync();
     }
     
-    public async Task<IEnumerable<Festival>> FilterByLocation(int locationId)
+    public async Task<IEnumerable<Festival>> FilterByCity(int cityId)
     {
         return await _festivals
-            .Where(f => f.LocationId == locationId)
+            .Where(f => f.CityId == cityId)
+            .ToListAsync();       
+    }
+
+    public async Task<IEnumerable<Festival>> FilterByCountry(int countryId)
+    {
+        return await _festivals
+            .Include(f => f.City)
+            .ThenInclude(c => c!.Country)
+            .Where(f => f.City!.CountryId == countryId)
             .ToListAsync();       
     }
 

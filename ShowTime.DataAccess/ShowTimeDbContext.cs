@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ShowTime.DataAccess.Configurations;
 using ShowTime.DataAccess.Models;
+using Country = ShowTime.DataAccess.Models.Country;
 
 namespace ShowTime.DataAccess;
 
@@ -15,7 +16,8 @@ public class ShowTimeDbContext : DbContext
     public DbSet<Lineup> Lineups { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Booking> Bookings { get; set; }
-    public DbSet<Location> Locations { get; set; }
+    public DbSet<City> Cities { get; set; }
+    public DbSet<Country> Countries { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<TicketType> TicketTypes { get; set; }

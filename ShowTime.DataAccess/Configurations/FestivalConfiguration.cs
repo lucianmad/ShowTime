@@ -17,9 +17,9 @@ public class FestivalConfiguration : IEntityTypeConfiguration<Festival>
         
         builder.HasIndex(f => f.Name).IsUnique();
 
-        builder.HasOne(f => f.Location)
-            .WithMany(l => l.Festivals)
-            .HasForeignKey(f => f.LocationId);
+        builder.HasOne(f => f.City)
+            .WithMany(c => c.Festivals)
+            .HasForeignKey(f => f.CityId);
         
         builder.HasMany(f => f.Artists)
             .WithMany(a => a.Festivals)
