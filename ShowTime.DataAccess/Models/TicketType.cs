@@ -6,5 +6,5 @@ public class TicketType
     public string Name { get; set; } = String.Empty;
     public string? Description { get; set; }
     
-    public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public ICollection<FestivalTicketType> FestivalTicketTypes { get; set; } = new List<FestivalTicketType>();
 }

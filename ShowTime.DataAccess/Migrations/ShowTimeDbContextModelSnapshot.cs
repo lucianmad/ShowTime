@@ -22,6 +22,21 @@ namespace ShowTime.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FestivalUser", b =>
+                {
+                    b.Property<int>("FestivalsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FestivalsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("FestivalUser");
+                });
+
             modelBuilder.Entity("ShowTime.DataAccess.Models.Artist", b =>
                 {
                     b.Property<int>("Id")
@@ -60,17 +75,14 @@ namespace ShowTime.DataAccess.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
-
                     b.Property<int>("TicketTypeId")
                         .HasColumnType("int");
 
-                    b.HasKey("FestivalId", "UserId");
-
-                    b.HasIndex("TicketTypeId");
+                    b.HasKey("FestivalId", "UserId", "TicketTypeId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("FestivalId", "TicketTypeId");
 
                     b.ToTable("Bookings", (string)null);
                 });
@@ -130,9 +142,6 @@ namespace ShowTime.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CityId")
                         .HasColumnType("int");
 
@@ -159,6 +168,27 @@ namespace ShowTime.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("Festivals", (string)null);
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.FestivalTicketType", b =>
+                {
+                    b.Property<int>("FestivalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TicketTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("FestivalId", "TicketTypeId");
+
+                    b.HasIndex("TicketTypeId");
+
+                    b.ToTable("FestivalTicketTypes", (string)null);
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Genre", b =>
@@ -288,6 +318,21 @@ namespace ShowTime.DataAccess.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("FestivalUser", b =>
+                {
+                    b.HasOne("ShowTime.DataAccess.Models.Festival", null)
+                        .WithMany()
+                        .HasForeignKey("FestivalsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShowTime.DataAccess.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ShowTime.DataAccess.Models.Artist", b =>
                 {
                     b.HasOne("ShowTime.DataAccess.Models.Genre", "Genre")
@@ -304,13 +349,7 @@ namespace ShowTime.DataAccess.Migrations
                     b.HasOne("ShowTime.DataAccess.Models.Festival", "Festival")
                         .WithMany("Bookings")
                         .HasForeignKey("FestivalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShowTime.DataAccess.Models.TicketType", "TicketType")
-                        .WithMany("Bookings")
-                        .HasForeignKey("TicketTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ShowTime.DataAccess.Models.User", "User")
@@ -319,9 +358,15 @@ namespace ShowTime.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ShowTime.DataAccess.Models.FestivalTicketType", "FestivalTicketType")
+                        .WithMany("Bookings")
+                        .HasForeignKey("FestivalId", "TicketTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Festival");
 
-                    b.Navigation("TicketType");
+                    b.Navigation("FestivalTicketType");
 
                     b.Navigation("User");
                 });
@@ -344,6 +389,25 @@ namespace ShowTime.DataAccess.Migrations
                         .HasForeignKey("CityId");
 
                     b.Navigation("City");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.FestivalTicketType", b =>
+                {
+                    b.HasOne("ShowTime.DataAccess.Models.Festival", "Festival")
+                        .WithMany("FestivalTicketTypes")
+                        .HasForeignKey("FestivalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ShowTime.DataAccess.Models.TicketType", "TicketType")
+                        .WithMany("FestivalTicketTypes")
+                        .HasForeignKey("TicketTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Festival");
+
+                    b.Navigation("TicketType");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Lineup", b =>
@@ -395,7 +459,14 @@ namespace ShowTime.DataAccess.Migrations
                 {
                     b.Navigation("Bookings");
 
+                    b.Navigation("FestivalTicketTypes");
+
                     b.Navigation("Lineups");
+                });
+
+            modelBuilder.Entity("ShowTime.DataAccess.Models.FestivalTicketType", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.Genre", b =>
@@ -410,7 +481,7 @@ namespace ShowTime.DataAccess.Migrations
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.TicketType", b =>
                 {
-                    b.Navigation("Bookings");
+                    b.Navigation("FestivalTicketTypes");
                 });
 
             modelBuilder.Entity("ShowTime.DataAccess.Models.User", b =>

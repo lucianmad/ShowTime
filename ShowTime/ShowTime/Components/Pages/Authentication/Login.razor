@@ -5,99 +5,107 @@
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IUserService UserService
-@inject NavigationManager NavigationManager
-@inject IHttpContextAccessor HttpContextAccessor
-@rendermode InteractiveServer 
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
-    <MudPaper Class="pa-8" Elevation="4">
-        <MudText Typo="Typo.h3" Align="Align.Center" Class="mb-6" Style="color: #6a1b9a;">
-            Login
-        </MudText>
+<PageTitle>Login</PageTitle>
 
-        <EditForm Model="LoginInfo" OnSubmit="Authenticate" FormName="LoginForm">
-            <MudTextField @bind-Value="LoginInfo.Email" 
-                          Label="Email Address"
-                          Required="true"
-                          RequiredError="Email is required"
-                          InputType="InputType.Email"
-                          Class="mb-4"
-                          Variant="Variant.Outlined"
-                          HelperText="Type the email for your account"/>
+<div class="login-container">
+    <div class="login-card">
+        <h1 class="login-title">Login</h1>
 
-            <MudTextField @bind-Value="LoginInfo.Password" 
-                          Label="Password"
-                          Required="true"
-                          RequiredError="Password is required"
-                          InputType="InputType.Password"
-                          Class="mb-4"
-                          Variant="Variant.Outlined"
-                          HelperText="Minimum 8 characters"/>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="error-message">@ErrorMessage</div>
+        }
 
-            <MudButton ButtonType="ButtonType.Submit"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       Size="Size.Large"
-                       FullWidth="true"
-                       Class="mb-4"
-                       StartIcon="@Icons.Material.Filled.PersonAdd">
-                Login
-            </MudButton>
+        <EditForm Model="loginInfo" OnValidSubmit="Authenticate" FormName="LoginForm">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <InputText @bind-Value="loginInfo.Email" class="form-control" id="email" placeholder="Enter your email" />
+                <div class="form-helper">Type the email for your account</div>
+                <ValidationMessage For="() => loginInfo.Email" class="validation-message" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText @bind-Value="loginInfo.Password" class="form-control" id="password" type="password" placeholder="Enter your password" />
+                <div class="form-helper">Minimum 8 characters</div>
+                <ValidationMessage For="() => loginInfo.Password" class="validation-message" />
+            </div>
+
+            <button type="submit" class="login-button" disabled="@IsLoading">
+                @if (IsLoading)
+                {
+                    <span>Logging in...</span>
+                }
+                else
+                {
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    <span>Login</span>
+                }
+            </button>
             
-            <MudDivider Class="my-4" />
+            <div class="divider"></div>
 
-            <MudText Align="Align.Center" Class="mb-2">
+            <div class="register-link">
                 Don't have an account?
-                <MudLink Href="/register" Style="color: #6a1b9a;">
-                    Register here
-                </MudLink>
-            </MudText>
+                <a href="/register">Register here</a>
+            </div>
         </EditForm>
-    </MudPaper>
-</MudContainer>
+    </div>
+</div>
 
 @code {
-    [SupplyParameterFromForm] private LoginDto LoginInfo { get; set; } = new();
+    [SupplyParameterFromForm]
+    private LoginDto loginInfo { get; set; } = new();
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+
+    private bool IsLoading { get; set; } = false;
+    private string ErrorMessage { get; set; } = string.Empty;
 
     private async Task Authenticate()
     {
         try
         {
-            var response = await UserService.LoginAsync(LoginInfo);
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+            StateHasChanged();
+
+            var response = await UserService.LoginAsync(loginInfo);
 
             if (response == null)
             {
-                Console.WriteLine("Login failed: Invalid credentials or user not found.");
+                ErrorMessage = "Invalid email or password. Please try again.";
+                IsLoading = false;
+                StateHasChanged();
                 return;
             }
-
+            
+            Console.WriteLine(response.Id.ToString());
+            
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Email, response.Email),
+                new(ClaimTypes.NameIdentifier, response.Id.ToString()),
+                new(ClaimTypes.Email, loginInfo.Email),
                 new(ClaimTypes.Role, response.RoleName)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            var httpContext = HttpContextAccessor.HttpContext;
-            if (httpContext != null)
-            {
-                await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-                httpContext.Response.Redirect("/");
-            }
-            else
-            {
-                throw new Exception("HttpContext is null");
-            }
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+            HttpContext.Response.Redirect("/");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Login failed: {ex}");
+            Console.WriteLine($"Login failed: {ex.Message}");
+            ErrorMessage = "An error occurred during login. Please try again.";
+            IsLoading = false;
+            StateHasChanged();
         }
     }
-
-
 }

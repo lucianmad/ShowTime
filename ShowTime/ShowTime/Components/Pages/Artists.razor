@@ -1,12 +1,16 @@
 @page "/artists"
+@using Microsoft.AspNetCore.Authorization
 @using ShowTime.BusinessLogic.Abstractions
 @using ShowTime.BusinessLogic.Dtos
 @inject IArtistService ArtistService
 @inject IGenreService GenreService
 @rendermode InteractiveServer
 @inject IDialogService DialogService
+@attribute [Authorize(Roles = "Admin")]
 
-<MudContainer>
+<PageTitle>Artists</PageTitle>
+
+<MudContainer Style="padding-bottom: 140px">
     <MudGrid Justify="Justify.SpaceBetween">
         <MudText Typo="Typo.h4" Class="mb-4 neon-title">ARTISTS</MudText>
 

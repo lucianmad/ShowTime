@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4GVAFNXCPNY=",
+  "dgSpecHash": "GPk5sOmb9C4=",
   "success": true,
   "projectFilePath": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/ShowTime.csproj",
   "expectedPackageFiles": [
@@ -16,6 +16,7 @@
     "/home/lucianm/.nuget/packages/microsoft.aspnetcore.components.analyzers/8.0.12/microsoft.aspnetcore.components.analyzers.8.0.12.nupkg.sha512",
     "/home/lucianm/.nuget/packages/microsoft.aspnetcore.components.forms/8.0.12/microsoft.aspnetcore.components.forms.8.0.12.nupkg.sha512",
     "/home/lucianm/.nuget/packages/microsoft.aspnetcore.components.web/8.0.12/microsoft.aspnetcore.components.web.8.0.12.nupkg.sha512",
+    "/home/lucianm/.nuget/packages/microsoft.aspnetcore.components.webassembly.server/8.0.17/microsoft.aspnetcore.components.webassembly.server.8.0.17.nupkg.sha512",
     "/home/lucianm/.nuget/packages/microsoft.aspnetcore.cryptography.internal/8.0.17/microsoft.aspnetcore.cryptography.internal.8.0.17.nupkg.sha512",
     "/home/lucianm/.nuget/packages/microsoft.aspnetcore.cryptography.keyderivation/8.0.17/microsoft.aspnetcore.cryptography.keyderivation.8.0.17.nupkg.sha512",
     "/home/lucianm/.nuget/packages/microsoft.aspnetcore.dataprotection/2.3.0/microsoft.aspnetcore.dataprotection.2.3.0.nupkg.sha512",

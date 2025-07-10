@@ -16,18 +16,21 @@
 
     <MudStack Row="true" Spacing="5" AlignItems="AlignItems.Center" Class="me-auto">
         <a href="/" class="button1">Home</a>
-
+        
         <AuthorizeView Roles="Admin">
-            <MudNavLink Href="weather">Weather</MudNavLink>
+            <a href="/artists" class="button1">Artists</a>
         </AuthorizeView>
-
-        <a href="/artists" class="button1">Artists</a>
+        
 
         <a href="/festivals" class="button1">Festivals</a>
+        
+        <AuthorizeView Roles="User">
+            <a href="/user-bookings" class="button1">Bookings</a>
+        </AuthorizeView>
     
         <AuthorizeView>
             <Authorized>
-                <a href="/logout" class="button2 logout">Logout</a>
+                <a href="/logout" class="button2 logout" @onclick="Logout">Logout</a>
             </Authorized>
             <NotAuthorized>
                 <a href="/login" class="button2">Login</a>
@@ -38,3 +41,12 @@
 </MudAppBar>
 
 <MudSpacer />
+
+@code{
+
+    public void Logout()
+    {
+        Navigation.NavigateTo("/logout",true);
+    }
+
+}

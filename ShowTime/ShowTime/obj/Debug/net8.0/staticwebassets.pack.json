@@ -121,8 +121,20 @@
       "PackagePath": "staticwebassets/images/festivals/beach_please.png"
     },
     {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/coachella.png",
+      "PackagePath": "staticwebassets/images/festivals/coachella.png"
+    },
+    {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/electric_castle.jpg",
+      "PackagePath": "staticwebassets/images/festivals/electric_castle.jpg"
+    },
+    {
       "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/festobal.jpg",
       "PackagePath": "staticwebassets/images/festivals/festobal.jpg"
+    },
+    {
+      "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/sziget.jpg",
+      "PackagePath": "staticwebassets/images/festivals/sziget.jpg"
     },
     {
       "Id": "/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/wwwroot/images/festivals/untold.png",

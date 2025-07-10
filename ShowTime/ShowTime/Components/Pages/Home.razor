@@ -1,7 +1,227 @@
 ﻿@page "/"
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Dtos
+@using ShowTime.DataAccess.Models
+@inject IFestivalService FestivalService
+@inject IArtistService ArtistService
+@inject ICityService CityService
+@inject ICountryService CountryService
+@inject ILineupService LineupService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>ShowTime - Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudContainer MaxWidth="MaxWidth.Large">
+    <div class="hero-section">
+        <MudText Typo="Typo.h3" Class="neon-title hero-title">SHOWTIME</MudText>
+        <MudText Typo="Typo.h6" Class="hero-subtitle">Discover Amazing Festivals & Book Your Experience</MudText>
+        <div class="stats-section">
+            <MudGrid Spacing="3">
+                <MudItem xs="6" sm="3">
+                    <MudPaper Class="stat-card">
+                        <MudText Typo="Typo.h4" Class="neon-stats-value">@_totalFestivals</MudText>
+                        <MudText Typo="Typo.body2" Class="neon-stats-label">Total Festivals</MudText>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="6" sm="3">
+                    <MudPaper Class="stat-card">
+                        <MudText Typo="Typo.h4" Class="neon-stats-value">@_upcomingFestivals.Count</MudText>
+                        <MudText Typo="Typo.body2" Class="neon-stats-label">Upcoming</MudText>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="6" sm="3">
+                    <MudPaper Class="stat-card">
+                        <MudText Typo="Typo.h4" Class="neon-stats-value">@_totalArtists</MudText>
+                        <MudText Typo="Typo.body2" Class="neon-stats-label">Artists</MudText>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="6" sm="3">
+                    <MudPaper Class="stat-card">
+                        <MudText Typo="Typo.h4" Class="neon-stats-value">@_totalCountries</MudText>
+                        <MudText Typo="Typo.body2" Class="neon-stats-label">Countries</MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </div>
+        </div>
+    
+    <div class="section-header">
+        <MudText Typo="Typo.h4" Class="neon-title">UPCOMING FESTIVALS</MudText>
+        <MudText Typo="Typo.body1" Class="neon-text-secondary">Don't miss these incredible events</MudText>
+    </div>
 
-Welcome to your new app.
+    @if (_upcomingFestivals.Count == 0)
+    {
+        <MudPaper Class="empty-state">
+            <MudIcon Icon="@Icons.Material.Filled.Event" Size="Size.Large" Style="color: rgba(0, 255, 255, 0.5);" />
+            <MudText Class="neon-text">No upcoming festivals at the moment</MudText>
+        </MudPaper>
+    }
+    else
+    {
+        <MudGrid Spacing="4">
+            @foreach (var festival in _upcomingFestivals)
+            {
+                <MudItem xs="12" lg="6">
+                    <MudCard Class="festival-card">
+                        <div class="festival-image-container">
+                            <MudCardMedia Image="@festival.SplashArt" Height="200" Style="object-fit: cover;" />
+                            <div class="festival-date-badge">
+                                <MudText Typo="Typo.caption" Class="date-text">@FormatFestivalDate(festival.StartDate, festival.EndDate)</MudText>
+                            </div>
+                        </div>
+                        
+                        <MudCardContent Class="festival-content">
+                            <div class="festival-header">
+                                <MudText Typo="Typo.h5" Class="neon-card-title">@festival.Name</MudText>
+                                <MudText Typo="Typo.body2" Class="neon-card-text festival-location">
+                                    <MudIcon Icon="@Icons.Material.Filled.LocationOn" Size="Size.Small" />
+                                    @festival.City?.Name, @festival.City?.Country?.Name
+                                </MudText>
+                            </div>
+
+                            @if (_festivalLineups.ContainsKey(festival.Id) && _festivalLineups[festival.Id].Any())
+                            {
+                                <div class="lineup-section-home">
+                                    <div class="lineup-header">
+                                        <MudText Typo="Typo.h6" Class="lineup-title">LINEUP</MudText>
+                                        <MudText Typo="Typo.caption" Class="lineup-count">@_festivalLineups[festival.Id].Count() artists</MudText>
+                                    </div>
+                                    
+                                    <div class="lineup-grid">
+                                        @foreach (var lineup in _festivalLineups[festival.Id].OrderBy(l => l.StartTime).Take(6))
+                                        {
+                                            <div class="lineup-item-home">
+                                                <div class="lineup-artist-name">@lineup.ArtistName</div>
+                                                <div class="lineup-details-home">
+                                                    <span class="lineup-time">@lineup.StartTime.ToString("HH:mm")</span>
+                                                    <span class="lineup-stage">@lineup.Stage</span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    
+                                    @if (_festivalLineups[festival.Id].Count() > 6)
+                                    {
+                                        <MudText Typo="Typo.caption" Class="more-artists">+@(_festivalLineups[festival.Id].Count() - 6) more artists</MudText>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="lineup-section-home">
+                                    <MudText Typo="Typo.body2" Class="no-lineup-text">Lineup to be announced</MudText>
+                                </div>
+                            }
+
+                            <div class="festival-actions">
+                                <AuthorizeView Roles="User">
+                                    <MudButton Variant="Variant.Filled" 
+                                               Class="neon-button book-button"
+                                               OnClick="() => OpenBookingDialog(festival.Id)">
+                                        <MudIcon Icon="@Icons.Material.Filled.BookOnline" Size="Size.Small" />
+                                        Book Ticket
+                                    </MudButton>
+                                </AuthorizeView>
+                                <MudButton Variant="Variant.Outlined" 
+                                           Class="neon-button details-button"
+                                           Href="@($"/festivals")"
+                                           Style="margin-left: 8px;">
+                                    View Details
+                                </MudButton>
+                            </div>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+    
+    <MudSpacer></MudSpacer>
+</MudContainer>
+
+@code {
+    private IList<FestivalGetDto> _upcomingFestivals = new List<FestivalGetDto>();
+    private IList<CountryGetDto> _countries = new List<CountryGetDto>();
+    private IList<CityGetDto> _cities = new List<CityGetDto>();
+    private IList<ArtistGetDto> _artists = new List<ArtistGetDto>();
+    private Dictionary<int, IEnumerable<LineupGetDto>> _festivalLineups = new();
+    private int _totalFestivals = 0;
+    private int _totalArtists = 0;
+    private int _totalCountries = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _countries = await CountryService.GetAllEntitiesAsync();
+        _cities = await CityService.GetAllEntitiesAsync();
+        _artists = await ArtistService.GetAllEntitiesAsync();
+        var allFestivals = await FestivalService.GetAllEntitiesAsync();
+        _totalFestivals = allFestivals.Count;
+        
+        var today = DateTime.Now;
+        var threeMonthsFromNow = today.AddMonths(3);
+        
+        _upcomingFestivals = allFestivals
+            .Where(f => f.StartDate.HasValue && f.EndDate.HasValue && f.EndDate.Value >= today && f.StartDate.Value <= threeMonthsFromNow)
+            .OrderBy(f => f.StartDate)
+            .Take(4)
+            .ToList();
+
+        await LoadLineupsAsync();
+        
+        _totalArtists = _festivalLineups.Values.SelectMany(l => l).Select(l => l.ArtistName).Distinct().Count();
+        _totalCountries = allFestivals.Where(f => f.City?.Country != null).Select(f => f.City.Country.Name).Distinct().Count();
+    }
+
+    private async Task LoadLineupsAsync()
+    {
+        foreach (var festival in _upcomingFestivals)
+        {
+            try
+            {
+                var lineup = await LineupService.GetLineupAsync(festival.Id);
+                _festivalLineups[festival.Id] = lineup;
+            }
+            catch
+            {
+                _festivalLineups[festival.Id] = new List<LineupGetDto>();
+            }
+        }
+    }
+
+    private string FormatFestivalDate(DateTime? startDate, DateTime? endDate)
+    {
+        if (!startDate.HasValue || !endDate.HasValue)
+            return "TBD";
+
+        var start = startDate.Value;
+        var end = endDate.Value;
+
+        if (start.Date == end.Date)
+        {
+            return start.ToString("MMM dd");
+        }
+
+        if (start.Month == end.Month)
+        {
+            return $"{start:MMM dd}-{end:dd}";
+        }
+
+        return $"{start:MMM dd} - {end:MMM dd}";
+    }
+
+    private async Task OpenBookingDialog(int festivalId)
+    {
+        var parameters = new DialogParameters { { "FestivalId", festivalId } };
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialogReference = await DialogService.ShowAsync<BookingDialog>("Book Ticket", parameters, options);
+
+        var result = await dialogReference.Result;
+        if (result != null && !result.Canceled)
+        {
+            Snackbar.Add("Booking complete!", Severity.Success);
+        }
+    }
+}

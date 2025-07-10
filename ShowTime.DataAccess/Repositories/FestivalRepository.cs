@@ -13,6 +13,8 @@ public class FestivalRepository : GenericRepository<Festival>, IFestivalReposito
         _festivals = context.Set<Festival>();
     }
 
+    
+    
     public async Task<Festival?> GetByName(string name)
     {
         try

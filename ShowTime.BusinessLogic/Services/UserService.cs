@@ -26,22 +26,11 @@ public class UserService : IUserService
             Console.WriteLine("User is null");
             throw new Exception("Invalid credentials");
         }
-        else
-        {
-            Console.WriteLine($"User found: {user.Email}");
-        }
-
         if (user.Password == null)
         {
             Console.WriteLine("User password is null");
             throw new Exception("Invalid credentials");
         }
-        else
-        {
-            Console.WriteLine($"Stored hash: {user.Password}");
-        }
-
-        Console.WriteLine($"Entered password: {loginDto.Password}");
 
         var passwordValid = _passwordHasher.VerifyHashedPassword(user, user.Password, loginDto.Password) == PasswordVerificationResult.Success;
 
@@ -63,6 +52,7 @@ public class UserService : IUserService
 
         return new LoginResponseDto
         {
+            Id = user.Id,
             Email = user.Email,
             RoleName = user.Role.Name
         };
@@ -80,7 +70,7 @@ public class UserService : IUserService
         var newUser = new User
         {
             Email = registerDto.Email,
-            RoleId = 2
+            RoleId = 1
         };
         
         newUser.Password = _passwordHasher.HashPassword(newUser, registerDto.Password);

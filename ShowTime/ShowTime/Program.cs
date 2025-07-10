@@ -9,6 +9,8 @@ using ShowTime.DataAccess;
 using ShowTime.DataAccess.Models;
 using ShowTime.DataAccess.Repositories;
 using ShowTime.DataAccess.Repositories.Abstractions;
+using Microsoft.AspNetCore.Components.WebAssembly.Server;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,9 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ICityRepository, CityRepository>();
 builder.Services.AddTransient<ICountryRepository, CountryRepository>();
 builder.Services.AddTransient<ILineupRepository, LineupRepository>();
+builder.Services.AddTransient<IBookingRepository, BookingRepository>();
+builder.Services.AddTransient<IFestivalTicketTypeRepository, FestivalTicketTypeRepository>();
+builder.Services.AddTransient<ITicketTypeRepository, TicketTypeRepository>();
 
 builder.Services.AddTransient<IArtistService, ArtistService>();
 builder.Services.AddTransient<IFestivalService, FestivalService>();
@@ -46,12 +51,16 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICityService, CityService>();
 builder.Services.AddTransient<ICountryService, CountryService>();
 builder.Services.AddTransient<ILineupService, LineupService>();
+builder.Services.AddTransient<IBookingService, BookingService>();
+builder.Services.AddTransient<IFestivalTicketTypeService, FestivalTicketTypeService>();
+builder.Services.AddTransient<ITicketTypeService, TicketTypeService>();
 builder.Services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddMudServices();
 
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
 
@@ -75,6 +84,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode();
 
 app.Run();

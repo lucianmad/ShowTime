@@ -8,10 +8,14 @@ namespace ShowTime.BusinessLogic.Services;
 public class LineupService : ILineupService
 {
     private readonly ILineupRepository _lineupRepository;
+    private readonly IFestivalRepository _festivalRepository;
+    private readonly IArtistRepository _artistRepository;
     
-    public LineupService(ILineupRepository lineupRepository)
+    public LineupService(ILineupRepository lineupRepository, IFestivalRepository festivalRepository, IArtistRepository artistRepository)
     {
         _lineupRepository = lineupRepository;
+        _festivalRepository = festivalRepository;
+        _artistRepository = artistRepository;   
     }
     
     public async Task<IEnumerable<LineupGetDto>> GetLineupAsync(int festivalId)
@@ -35,6 +39,7 @@ public class LineupService : ILineupService
 
     public async Task AddToLineupAsync(LineupCreateDto lineupCreateDto)
     {
+        await ValidateLineupInputAsync(lineupCreateDto);
         var entity = new Lineup
         {
             FestivalId = lineupCreateDto.FestivalId,
@@ -54,6 +59,7 @@ public class LineupService : ILineupService
     
     public async Task UpdateLineupAsync(LineupCreateDto lineupCreateDto)
     {
+        await ValidateLineupInputAsync(lineupCreateDto);
         try
         {
             var entity = new Lineup
@@ -82,5 +88,31 @@ public class LineupService : ILineupService
         {
             throw new Exception($"Unable to remove artist from lineup: {ex.Message}");
         }
+    }
+    
+    private async Task ValidateLineupInputAsync(LineupCreateDto lineupCreateDto)
+    {
+        if (lineupCreateDto.FestivalId <= 0)
+            throw new ArgumentException("Invalid festival ID");
+        
+        if (lineupCreateDto.ArtistId <= 0)
+            throw new ArgumentException("Invalid artist ID");
+        
+        if (string.IsNullOrWhiteSpace(lineupCreateDto.Stage))
+            throw new ArgumentException("Stage is required");
+        
+        var festival = await _festivalRepository.GetByIdAsync(lineupCreateDto.FestivalId);
+        if (festival == null)
+            throw new ArgumentException($"Festival with ID {lineupCreateDto.FestivalId} not found");
+        
+        var artist = await _artistRepository.GetByIdAsync(lineupCreateDto.ArtistId);
+        if (artist == null)
+            throw new ArgumentException($"Artist with ID {lineupCreateDto.ArtistId} not found");
+        
+        if (festival.StartDate.HasValue && lineupCreateDto.StartTime < festival.StartDate.Value)
+            throw new ArgumentException("Performance time cannot be before festival start date");
+        
+        if (festival.EndDate.HasValue && lineupCreateDto.StartTime > festival.EndDate.Value)
+            throw new ArgumentException("Performance time cannot be after festival end date");
     }
 }

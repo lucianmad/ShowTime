@@ -50,6 +50,152 @@ h1:focus {
     border-color: #929292;
 }
 
+.login-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.login-card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.login-title {
+    font-size: 2rem;
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #6a1b9a;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.form-control {
+    width: 100%;
+    padding: 16px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background: transparent;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #6a1b9a;
+}
+
+.form-control:focus + .form-label,
+.form-control:not(:placeholder-shown) + .form-label {
+    transform: translateY(-24px) scale(0.75);
+    color: #6a1b9a;
+}
+
+.form-label {
+    position: absolute;
+    left: 12px;
+    top: 16px;
+    font-size: 1rem;
+    color: #666;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: white;
+    padding: 0 4px;
+}
+
+.form-helper {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 4px;
+    margin-left: 12px;
+}
+
+.validation-message {
+    color: #d32f2f;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    margin-left: 12px;
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #6a1b9a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.login-button:hover {
+    background-color: #5a1a8a;
+}
+
+.login-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 1rem 0;
+}
+
+.register-link {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.register-link a {
+    color: #6a1b9a;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.error-message {
+    color: #d32f2f;
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 8px;
+    background-color: #ffebee;
+    border-radius: 4px;
+    border: 1px solid #ffcdd2;
+}
+
+label {
+    position: static;
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+}
+
 /* Neon Title Styling */
 .neon-title {
     color: #00ffff !important;
@@ -178,7 +324,7 @@ h1:focus {
     color: #bdc3c7 !important;
 }
 
-/* Lineup Section Styles (for festivals page compatibility) */
+/* Lineup Section Styles for festivals page  */
 .lineup-section {
     margin-top: 12px;
     padding-top: 8px;
@@ -240,5 +386,662 @@ h1:focus {
 
     .neon-title {
         font-size: 1.5rem !important;
+    }
+}
+
+/* Date Filter Section */
+.date-filter-section {
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid #00ffff;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.date-filter-title {
+    color: #00ffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.custom-date-picker {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.date-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-input-label {
+    color: #00ffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.custom-mud-datepicker .mud-input-outlined-border {
+    border-color: rgba(0, 255, 255, 0.5) !important;
+    border-radius: 6px;
+}
+
+.custom-mud-datepicker .mud-input:hover .mud-input-outlined-border {
+    border-color: #00ffff !important;
+}
+
+.custom-mud-datepicker .mud-input-outlined {
+    background-color: rgba(26, 26, 46, 0.8) !important;
+}
+
+.custom-mud-datepicker .mud-input-slot {
+    color: #00ffff !important;
+}
+
+.custom-mud-datepicker .mud-input input {
+    color: #00ffff !important;
+    font-size: 0.9rem;
+    padding: 10px 14px;
+}
+
+.custom-mud-datepicker .mud-popover {
+    background-color: #1a1a2e !important;
+    border: 1px solid #00ffff !important;
+}
+
+.custom-mud-datepicker .mud-picker-toolbar {
+    background-color: rgba(0, 255, 255, 0.1) !important;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2) !important;
+}
+
+.custom-mud-datepicker .mud-picker-datepicker-toolbar-date {
+    color: #00ffff !important;
+}
+
+.custom-mud-datepicker .mud-day:hover:not(.mud-disabled):not(.mud-day-selected) {
+    background-color: rgba(0, 255, 255, 0.1) !important;
+}
+
+.custom-mud-datepicker .mud-day-selected {
+    background-color: #00ffff !important;
+    color: #1a1a2e !important;
+    font-weight: bold;
+}
+
+.clear-dates-btn {
+    background: transparent !important;
+    border: 1px solid rgba(255, 0, 0, 0.4) !important;
+    color: #ff6b6b !important;
+    padding: 4px 5px !important;
+    border-radius: 6px !important;
+    font-size: 0.85rem !important;
+    text-transform: none !important;
+    transition: all 0.3s ease !important;
+    align-self: flex-end;
+    margin-bottom: 8px;
+}
+
+.clear-dates-btn:hover {
+    background: rgba(255, 0, 0, 0.2) !important;
+    border-color: rgba(255, 0, 0, 0.6) !important;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Filter Summary */
+.filter-summary {
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-summary-text {
+    color: #00ffff;
+    font-size: 0.9rem;
+}
+
+.filter-summary-count {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .custom-date-picker {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-input-wrapper {
+        align-items: flex-start;
+    }
+
+    .clear-dates-btn {
+        align-self: center;
+        margin-top: 8px;
+    }
+}
+
+/* Bookings Page Styles */
+.neon-table-container {
+    background: rgba(26, 26, 46, 0.3) !important;
+    border: 1px solid rgba(0, 255, 255, 0.2) !important;
+    border-radius: 8px;
+    overflow: hidden;
+    backdrop-filter: blur(2px);
+}
+
+.neon-table {
+    width: 100%;
+    background: transparent !important;
+}
+
+.neon-table .mud-table-container {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.neon-table .mud-table-row {
+    background: transparent !important;
+    transition: all 0.3s ease;
+}
+
+.neon-table .mud-table-row:hover {
+    background: rgba(0, 255, 255, 0.08) !important;
+}
+
+.neon-table .mud-table-cell {
+    border-bottom: 1px solid rgba(0, 255, 255, 0.15) !important;
+    background: transparent !important;
+}
+
+.neon-table .mud-table-head {
+    background: rgba(26, 26, 46, 0.4) !important;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3) !important;
+}
+
+.neon-booking-festival {
+    color: #00ffff !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+}
+
+.neon-booking-detail {
+    color: #bdc3c7 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.neon-empty-state {
+    background: rgba(26, 26, 46, 0.3) !important;
+    border: 1px dashed rgba(0, 255, 255, 0.3) !important;
+    border-radius: 8px !important;
+    padding: 40px 20px !important;
+    backdrop-filter: blur(2px);
+}
+
+.neon-empty-state .mud-icon {
+    color: rgba(0, 255, 255, 0.5) !important;
+}
+
+.neon-text {
+    color: #00ffff !important;
+}
+
+.neon-text-warning {
+    color: #ff5555 !important;
+    text-shadow: 0 0 4px rgba(255, 85, 85, 0.3);
+}
+
+.neon-text-secondary {
+    color: rgba(189, 195, 199, 0.7) !important;
+}
+
+.neon-stats-card {
+    background: rgba(26, 26, 46, 0.3) !important;
+    border: 1px solid rgba(0, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    height: 100%;
+    backdrop-filter: blur(2px);
+    transition: all 0.3s ease;
+}
+
+.neon-stats-card:hover {
+    background: rgba(26, 26, 46, 0.4) !important;
+    border-color: rgba(0, 255, 255, 0.3) !important;
+}
+
+.neon-stats-value {
+    color: #00ffff !important;
+    font-weight: 600 !important;
+    text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+}
+
+.neon-stats-label {
+    color: rgba(189, 195, 199, 0.7) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .neon-table-container {
+        border-radius: 6px;
+    }
+
+    .neon-table .mud-table-cell {
+        padding: 10px 6px !important;
+    }
+
+    .neon-booking-festival {
+        font-size: 0.9rem !important;
+    }
+
+    .neon-booking-detail {
+        font-size: 0.8rem !important;
+        gap: 6px !important;
+    }
+
+    .neon-stats-card {
+        padding: 12px !important;
+    }
+}
+
+.hero-section {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, rgba(65, 38, 122, 0.3) 0%, rgba(26, 26, 46, 0.3) 100%);
+    border-radius: 12px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(10px);
+}
+
+.hero-title {
+    font-size: 3rem !important;
+    margin-bottom: 16px !important;
+    letter-spacing: 4px !important;
+}
+
+.hero-subtitle {
+    color: rgba(189, 195, 199, 0.8) !important;
+    font-size: 1.2rem !important;
+    font-weight: 300 !important;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-header .neon-title {
+    margin-bottom: 8px !important;
+}
+
+.festival-card {
+    background: linear-gradient(135deg, #41267a 0%, #1a1a2e 100%) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.festival-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.15);
+}
+
+.festival-image-container {
+    position: relative;
+}
+
+.festival-date-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 255, 255, 0.9);
+    color: #1a1a2e;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.date-text {
+    color: #1a1a2e !important;
+    font-weight: 600 !important;
+}
+
+.festival-content {
+    padding: 20px !important;
+}
+
+.festival-header {
+    margin-bottom: 16px;
+}
+
+.festival-location {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-top: 4px !important;
+}
+
+.lineup-section-home {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.lineup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.lineup-title {
+    color: #00ffff !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+}
+
+.lineup-count {
+    color: rgba(189, 195, 199, 0.7) !important;
+}
+
+.lineup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.lineup-item-home {
+    padding: 8px;
+    background: rgba(0, 255, 255, 0.05);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.lineup-artist-name {
+    color: #00ffff;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.lineup-details-home {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(189, 195, 199, 0.7);
+}
+
+.lineup-time {
+    font-weight: 500;
+}
+
+.more-artists {
+    color: rgba(0, 255, 255, 0.7) !important;
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.festival-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.book-button {
+    background: #00ffff !important;
+    color: #1a1a2e !important;
+    border: none !important;
+    font-weight: 600 !important;
+}
+
+.book-button:hover {
+    background: rgba(0, 255, 255, 0.8) !important;
+}
+
+.details-button {
+    border-color: rgba(0, 255, 255, 0.5) !important;
+    color: #00ffff !important;
+}
+
+.details-button:hover {
+    background: rgba(0, 255, 255, 0.1) !important;
+}
+
+.stats-section {
+    margin-top: 50px;
+}
+
+.stat-card {
+    background: rgba(26, 26, 46, 0.4) !important;
+    border: 1px solid rgba(0, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(26, 26, 46, 0.6) !important;
+    border-color: rgba(0, 255, 255, 0.4) !important;
+}
+
+.empty-state {
+    background: rgba(26, 26, 46, 0.3) !important;
+    border: 1px dashed rgba(0, 255, 255, 0.3) !important;
+    border-radius: 8px !important;
+    padding: 60px 20px !important;
+    text-align: center;
+    backdrop-filter: blur(2px);
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem !important;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem !important;
+    }
+
+    .lineup-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .festival-actions {
+        flex-direction: column;
+    }
+}
+
+/* Festival Page */
+.festivals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.festival-card-full {
+    background: linear-gradient(135deg, #41267a 0%, #1a1a2e 100%) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+}
+
+.festival-card-full:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.15);
+}
+
+.festival-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.festival-card-full .festival-image-container {
+    position: relative;
+    flex: 0 0 300px;
+    width: 300px;
+}
+
+.festival-card-full .festival-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.festival-card-full .admin-actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+}
+
+.festival-content-full {
+    flex: 1;
+    padding: 24px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.lineup-section-full {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    flex: 1;
+}
+
+.lineup-section-full .lineup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.lineup-grid-full {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.lineup-item-full {
+    padding: 12px;
+    background: rgba(0, 255, 255, 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.lineup-item-full:hover {
+    background: rgba(0, 255, 255, 0.1);
+    border-color: rgba(0, 255, 255, 0.2);
+}
+
+.lineup-item-full .lineup-artist-name {
+    color: #00ffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.lineup-details-full {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: rgba(189, 195, 199, 0.7);
+}
+
+.lineup-details-full .lineup-time {
+    font-weight: 500;
+    color: rgba(0, 255, 255, 0.8);
+}
+
+.lineup-details-full .lineup-stage {
+    font-style: italic;
+}
+
+.lineup-grid-full::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lineup-grid-full::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.lineup-grid-full::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.lineup-grid-full::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 255, 0.5);
+}
+
+/* Responsive design for festival cards */
+@media (max-width: 768px) {
+    .festival-content-wrapper {
+        flex-direction: column;
+    }
+
+    .festival-card-full .festival-image-container {
+        flex: 0 0 200px;
+        width: 100%;
+    }
+
+    .festival-content-full {
+        padding: 16px !important;
+    }
+
+    .lineup-grid-full {
+        grid-template-columns: 1fr;
+        max-height: 200px;
+    }
+
+    .lineup-section-full {
+        margin: 16px 0;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .festival-card-full .festival-image-container {
+        flex: 0 0 150px;
+    }
+
+    .lineup-grid-full {
+        max-height: 150px;
     }
 }

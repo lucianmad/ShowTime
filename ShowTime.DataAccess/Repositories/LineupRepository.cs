@@ -17,7 +17,14 @@ public class LineupRepository : ILineupRepository
 
     public async Task<Lineup?> GetAsync(int festivalId, int artistId)
     {
-        return await _lineups.SingleOrDefaultAsync(l => l.FestivalId == festivalId && l.ArtistId == artistId);   
+        try
+        {
+            return await _lineups.SingleOrDefaultAsync(l => l.FestivalId == festivalId && l.ArtistId == artistId);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Unable to get lineup: {ex.Message}");
+        }   
     }
     
     public async Task<IEnumerable<Lineup>> GetByFestivalIdAsync(int festivalId)

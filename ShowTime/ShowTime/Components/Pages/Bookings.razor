@@ -1,0 +1,151 @@
+@page "/user-bookings"
+@using System.Security.Claims
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Dtos
+@inject IBookingService BookingService
+@inject ISnackbar Snackbar
+@inject AuthenticationStateProvider AuthProvider
+@rendermode InteractiveServer
+
+<PageTitle>My Bookings</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
+        <MudText Typo="Typo.h4" Class="neon-title">MY BOOKINGS</MudText>
+        <MudText Typo="Typo.body1" Class="neon-text">Total: @bookings.Count() booking@(bookings.Count() == 1 ? "" : "s")</MudText>
+    </MudGrid>
+
+    @if (UserId == 0)
+    {
+        <MudPaper Class="pa-4 text-center neon-empty-state">
+            <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Large" Class="mb-3" Color="Color.Warning" />
+            <MudText Typo="Typo.h6" Class="neon-text-warning">Unable to load bookings</MudText>
+            <MudText Typo="Typo.body2" Class="neon-text-secondary mt-2">
+                Please log in to view your bookings
+            </MudText>
+        </MudPaper>
+    }
+    else if (isLoading)
+    {
+        <MudContainer Class="d-flex justify-center align-center" Style="height: 300px;">
+            <MudProgressCircular Color="Color.Info" Size="Size.Large" Indeterminate="true" />
+        </MudContainer>
+    }
+    else if (!bookings.Any())
+    {
+        <MudPaper Class="pa-4 text-center neon-empty-state">
+            <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber" Size="Size.Large" Class="mb-3" />
+            <MudText Typo="Typo.h6" Class="neon-text">No bookings yet</MudText>
+            <MudText Typo="Typo.body2" Class="neon-text-secondary mt-2">
+                Your upcoming festival tickets will appear here
+            </MudText>
+        </MudPaper>
+    }
+    else
+    {
+        <div class="neon-table-container">
+            <MudTable Items="@bookings" Hover="true" Breakpoint="Breakpoint.None" Class="neon-table">
+                <HeaderContent>
+                    <MudTh Style="color: #FF00FFFF">Festival</MudTh>
+                    <MudTh Style="color: #FF00FFFF">Ticket Type</MudTh>
+                    <MudTh Style="color: #FF00FFFF">Price</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Festival">
+                        <MudText Class="neon-booking-festival">@context.FestivalName</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="Ticket Type">
+                        <MudText Class="neon-booking-detail">
+                            <MudIcon Icon="@Icons.Material.Filled.ConfirmationNumber" Size="Size.Small" />
+                            @context.TicketTypeName
+                        </MudText>
+                    </MudTd>
+                    <MudTd DataLabel="Price">
+                        <MudText Class="neon-booking-detail">
+                            @context.Price.ToString("N2") RON
+                        </MudText>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText Class="neon-text">No bookings found</MudText>
+                </NoRecordsContent>
+            </MudTable>
+        </div>
+
+
+        <MudGrid Class="mt-4">
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Class="pa-4 text-center neon-stats-card">
+                    <MudText Typo="Typo.h4" Class="neon-stats-value">@bookings.Count()</MudText>
+                    <MudText Typo="Typo.body2" Class="neon-stats-label">Total Bookings</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Class="pa-4 text-center neon-stats-card">
+                    <MudText Typo="Typo.h4" Class="neon-stats-value">@bookings.Select(b => b.FestivalId).Distinct().Count()</MudText>
+                    <MudText Typo="Typo.body2" Class="neon-stats-label">Unique Festivals</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Class="pa-4 text-center neon-stats-card">
+                    <MudText Typo="Typo.h4" Class="neon-stats-value">@bookings.Sum(b => b.Price).ToString("N2") RON</MudText>
+                    <MudText Typo="Typo.body2" Class="neon-stats-label">Total Spent</MudText>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    private int UserId = 0;
+    private IEnumerable<BookingUserHistoryDto> bookings = new List<BookingUserHistoryDto>();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity?.IsAuthenticated ?? true)
+        {
+            Snackbar.Add("You need to be logged in to view bookings.", Severity.Warning);
+            return;
+        }
+
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            Snackbar.Add("Invalid user session.", Severity.Error);
+            return;
+        }
+
+        UserId = userId;
+        await LoadBookings();
+    }
+    
+    private async Task LoadBookings()
+    {
+        if (UserId <= 0)
+        {
+            isLoading = false;
+            return;
+        }
+
+        try
+        {
+            isLoading = true;
+            bookings = await BookingService.GetBookingUserHistoryAsync(UserId);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading bookings: {ex.Message}", Severity.Error);
+            bookings = new List<BookingUserHistoryDto>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}

@@ -48,12 +48,13 @@ public abstract class GenericEntityService<TEntity, TGetDto, TCreateDto> : IEnti
         }
     }
 
-    public async Task AddEntityAsync(TCreateDto entityCreateDto)
+    public async Task<TGetDto> AddEntityAsync(TCreateDto entityCreateDto)
     {
         var entity = MapToEntityForCreate(entityCreateDto);
         try
         {
-            await _repository.AddAsync(entity);
+            var savedEntity = await _repository.AddAsync(entity);
+            return MapToGetDto(savedEntity);
         }
         catch (Exception ex)
         {

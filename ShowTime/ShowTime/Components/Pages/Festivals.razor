@@ -7,21 +7,23 @@
 @inject ICountryService CountryService
 @inject ILineupService LineupService
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @rendermode InteractiveServer
 
+<PageTitle>Festivals</PageTitle>
 
-<MudContainer>
+<MudContainer MaxWidth="MaxWidth.Large" Style="padding-bottom: 140px">
     <MudGrid Justify="Justify.SpaceBetween">
         <MudText Typo="Typo.h4" Class="mb-4 neon-title">FESTIVALS</MudText>
-
-        <MudButton Class="neon-button"
-                   Variant="Variant.Text"
-                   @onclick="@(AddFestivalAsync)">
-            <span class="button-text">ADD FESTIVAL</span>
-        </MudButton>
+        <AuthorizeView Roles="Admin">
+            <MudButton Class="neon-button"
+                       Variant="Variant.Text"
+                       @onclick="@(AddFestivalAsync)">
+                <span class="button-text">ADD FESTIVAL</span>
+            </MudButton>
+        </AuthorizeView>
     </MudGrid>
-
-   
+    
     <div class="search-filters">
         <div class="input-wrapper">
             <span class="search-icon">
@@ -51,83 +53,143 @@
             <span class="select-arrow">▼</span>
         </div>
     </div>
+    
+    <div class="date-filter-section">
+        <div class="custom-date-picker">
+            <div class="date-input-wrapper">
+                <span class="date-input-label">From Date</span>
+                <MudDatePicker Date="_customStartDate"
+                               DateChanged="OnStartDateChanged"
+                               Variant="Variant.Outlined"
+                               PickerVariant="PickerVariant.Inline"
+                               Label=""
+                               Class="custom-mud-datepicker"/>
+            </div>
+        
+            <div class="date-input-wrapper">
+                <span class="date-input-label">To Date</span>
+                <MudDatePicker Date="_customEndDate"
+                               DateChanged="OnEndDateChanged"
+                               Variant="Variant.Outlined"
+                               PickerVariant="PickerVariant.Inline"
+                               Label=""
+                               Class="custom-mud-datepicker"/>
+            </div>
+        
+            <MudButton Class="neon-button clear-dates-btn"
+                       Variant="Variant.Text"
+                       OnClick="ClearCustomDates"
+                       EndIcon="@Icons.Material.Filled.Clear">
+                Clear
+            </MudButton>
+        </div>
+    </div>
 
-    
-    
+    @if (HasActiveFilters())
+    {
+        <div class="filter-summary">
+            <div class="filter-summary-text">
+                @GetFilterSummaryText()
+            </div>
+            <div class="filter-summary-count">
+                @_festivals.Count festival@(_festivals.Count == 1 ? "" : "s") found
+            </div>
+        </div>
+    }
+
     @if (_festivals.Count == 0)
     {
-        <MudPaper Class="pa-4 text-center" Style="background-color: #f5f5f5;">
-            <MudText>No festivals found</MudText>
+        <MudPaper Class="empty-state">
+            <MudIcon Icon="@Icons.Material.Filled.Event" Size="Size.Large" Style="color: rgba(0, 255, 255, 0.5);" />
+            <MudText Class="neon-text">No festivals found matching your criteria</MudText>
         </MudPaper>
     }
     else
     {
-        <MudGrid Spacing="4" Justify="Justify.FlexStart">
+        <div class="festivals-list">
             @foreach (var festival in _festivals)
             {
-                <MudItem xs="12" sm="6" md="4" lg="3" xl="2">
-                    <MudCard Style="height: 100%; border-radius: 18px; overflow: hidden; position: relative;">
-                        <div style="position: relative;">
-                            <MudCardMedia Image="@festival.SplashArt" Height="250" Style="object-fit: cover;"/>
-                            <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                               Color="Color.Primary"
-                                               Variant="Variant.Filled"
-                                               Size="Size.Small"
-                                               Style="background-color: rgba(234,146,12,0.8);"
-                                               @onclick="@(() => EditFestivalAsync(festival.Id))"/>
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                               Color="Color.Primary"
-                                               Variant="Variant.Filled"
-                                               Size="Size.Small"
-                                               Style="background-color: rgba(253,2,2,0.8);"
-                                               @onclick="@(() => DeleteFestivalAsync(festival.Id))"/>
+                <MudCard Class="festival-card-full">
+                    <div class="festival-content-wrapper">
+                        <div class="festival-image-container">
+                            <MudCardMedia Image="@festival.SplashArt" Height="250" Style="object-fit: cover;" />
+                            <div class="festival-date-badge">
+                                <MudText Typo="Typo.caption" Class="date-text">@FormatDateRange(festival.StartDate, festival.EndDate)</MudText>
                             </div>
+                            <AuthorizeView Roles="Admin">
+                                <div class="admin-actions">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                   Color="Color.Primary"
+                                                   Variant="Variant.Filled"
+                                                   Size="Size.Small"
+                                                   Style="background-color: rgba(234,146,12,0.8);"
+                                                   @onclick="@(() => EditFestivalAsync(festival.Id))"/>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Primary"
+                                                   Variant="Variant.Filled"
+                                                   Size="Size.Small"
+                                                   Style="background-color: rgba(253,2,2,0.8);"
+                                                   @onclick="@(() => DeleteFestivalAsync(festival.Id))"/>
+                                </div>
+                            </AuthorizeView>
                         </div>
-                        <MudCardContent Style="background: linear-gradient(135deg, #41267a 0%, #1a1a2e 100%); min-height: 160px;">
-                            <MudText Typo="Typo.h6" Class="neon-card-title" Style="margin-bottom: 8px;">@festival.Name</MudText>
-                            <MudText Typo="Typo.body2" Class="neon-card-text">@festival.City?.Name, @festival.City?.Country?.Name</MudText>
-                            <MudText Typo="Typo.body2" Class="neon-card-text">@festival.StartDate?.ToShortDateString() - @festival.EndDate?.ToShortDateString()</MudText>
-                            <MudText Typo="Typo.body2" Class="neon-card-text">Capacity: @festival.Capacity</MudText>
-                            
+                        
+                        <MudCardContent Class="festival-content-full">
+                            <div class="festival-header">
+                                <MudText Typo="Typo.h5" Class="neon-card-title">@festival.Name</MudText>
+                                <MudText Typo="Typo.body2" Class="neon-card-text festival-location">
+                                    <MudIcon Icon="@Icons.Material.Filled.LocationOn" Size="Size.Small" />
+                                    @festival.City?.Name, @festival.City?.Country?.Name
+                                </MudText>
+                            </div>
+
                             @if (_festivalLineups.ContainsKey(festival.Id) && _festivalLineups[festival.Id].Any())
                             {
-                                <div class="lineup-section">
-                                    <div class="lineup-toggle" @onclick="@(() => ToggleLineupVisibility(festival.Id))">
-                                        <MudIcon Icon="@(_lineupVisibility.GetValueOrDefault(festival.Id) ? Icons.Material.Filled.ExpandLess : Icons.Material.Filled.ExpandMore)" 
-                                                 Size="Size.Small" />
-                                        <span>Lineup (@_festivalLineups[festival.Id].Count())</span>
+                                <div class="lineup-section-full">
+                                    <div class="lineup-header">
+                                        <MudText Typo="Typo.h6" Class="lineup-title">LINEUP</MudText>
+                                        <MudText Typo="Typo.caption" Class="lineup-count">@_festivalLineups[festival.Id].Count() artists</MudText>
                                     </div>
                                     
-                                    @if (_lineupVisibility.GetValueOrDefault(festival.Id))
-                                    {
-                                        <div style="max-height: 120px; overflow-y: auto;">
-                                            @foreach (var lineup in _festivalLineups[festival.Id].OrderBy(l => l.StartTime))
-                                            {
-                                                <div class="lineup-item">
-                                                    <span class="lineup-artist">@lineup.ArtistName</span>
-                                                    <div class="lineup-details">
-                                                        <div>@lineup.Stage</div>
-                                                        <div>@lineup.StartTime.ToString("HH:mm")</div>
-                                                    </div>
+                                    <div class="lineup-grid-full">
+                                        @foreach (var lineup in _festivalLineups[festival.Id].OrderBy(l => l.StartTime))
+                                        {
+                                            <div class="lineup-item-full">
+                                                <div class="lineup-artist-name">@lineup.ArtistName</div>
+                                                <div class="lineup-details-full">
+                                                    <span class="lineup-time">@lineup.StartTime.ToString("HH:mm")</span>
+                                                    <span class="lineup-stage">@lineup.Stage</span>
                                                 </div>
-                                            }
-                                        </div>
-                                    }
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             }
                             else
                             {
-                                <div class="lineup-section">
-                                    <MudText Typo="Typo.body2" Class="no-lineup-text">No lineup available</MudText>
+                                <div class="lineup-section-full">
+                                    <MudText Typo="Typo.body2" Class="no-lineup-text">Lineup to be announced</MudText>
                                 </div>
                             }
+
+                            <div class="festival-actions">
+                                <AuthorizeView Roles="User">
+                                    <MudButton Variant="Variant.Filled" 
+                                               Class="neon-button book-button"
+                                               OnClick="() => OpenBookingDialog(festival.Id)">
+                                        <MudIcon Icon="@Icons.Material.Filled.BookOnline" Size="Size.Small" />
+                                        Book Ticket
+                                    </MudButton>
+                                </AuthorizeView>
+                            </div>
                         </MudCardContent>
-                    </MudCard>
-                </MudItem>
+                    </div>
+                </MudCard>
             }
-        </MudGrid>
+        </div>
     }
+    
+    <MudSpacer></MudSpacer>
 </MudContainer>
 
 @code {
@@ -136,9 +198,11 @@
     private IList<CountryGetDto> _countries = new List<CountryGetDto>();
     private IList<CityGetDto> _cities = new List<CityGetDto>();
     private Dictionary<int, IEnumerable<LineupGetDto>> _festivalLineups = new();
-    private Dictionary<int, bool> _lineupVisibility = new();
     private string _searchTerm = string.Empty;
     private int? _selectedCountryId = null;
+    
+    private DateTime? _customStartDate = null;
+    private DateTime? _customEndDate = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -167,15 +231,42 @@
         }
     }
 
-    private void ToggleLineupVisibility(int festivalId)
+    private async Task ClearCustomDates()
     {
-        _lineupVisibility[festivalId] = !_lineupVisibility.GetValueOrDefault(festivalId);
+        _customStartDate = null;
+        _customEndDate = null;
+        await ApplyFiltersAsync();
+    }
+
+    private string FormatDateRange(DateTime? startDate, DateTime? endDate)
+    {
+        if (!startDate.HasValue || !endDate.HasValue)
+            return "TBD";
+
+        var start = startDate.Value;
+        var end = endDate.Value;
+
+        if (start.Date == end.Date)
+        {
+            return start.ToString("d MMMM yyyy");
+        }
+
+        if (start.Month == end.Month && start.Year == end.Year)
+        {
+            return $"{start.Day}-{end.Day} {start:MMMM yyyy}";
+        }
+
+        if (start.Year == end.Year)
+        {
+            return $"{start:d MMMM} - {end:d MMMM yyyy}";
+        }
+
+        return $"{start:d MMMM yyyy} - {end:d MMMM yyyy}";
     }
 
     private async Task AddFestivalAsync()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-
         var dialogReference = await DialogService.ShowAsync<AddFestivalDialog>("Add festival", options);
         var result = await dialogReference.Result;
 
@@ -189,13 +280,8 @@
     
     private async Task EditFestivalAsync(int id)
     {
-        var parameters = new DialogParameters
-        {
-            { "FestivalId", id }
-        };
-
+        var parameters = new DialogParameters { { "FestivalId", id } };
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Large, FullWidth = true };
-
         var dialogReference = await DialogService.ShowAsync<EditFestivalDialog>("Edit Festival", parameters, options);
         var result = await dialogReference.Result;
 
@@ -218,7 +304,6 @@
         };
 
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-
         var dialogReference = await DialogService.ShowAsync<DeleteFestivalDialog>("Delete", parameters, options);
         var result = await dialogReference.Result;
 
@@ -230,7 +315,7 @@
         }
     }
 
-    private Task ApplyFiltersAsync()
+    private async Task ApplyFiltersAsync()
     {
         IEnumerable<FestivalGetDto> filtered = _allFestivals;
 
@@ -244,7 +329,100 @@
             filtered = filtered.Where(f => f.Name.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
+        filtered = ApplyDateFilter(filtered);
+
         _festivals = filtered.ToList();
-        return Task.CompletedTask;
+        StateHasChanged();
+    }
+
+    private IEnumerable<FestivalGetDto> ApplyDateFilter(IEnumerable<FestivalGetDto> festivals)
+    {
+        if (_customStartDate.HasValue && _customEndDate.HasValue)
+        {
+            return festivals.Where(f => 
+                f.StartDate.HasValue && f.EndDate.HasValue &&
+                f.StartDate.Value.Date <= _customEndDate.Value.Date && 
+                f.EndDate.Value.Date >= _customStartDate.Value.Date);
+        }
+        else if (_customStartDate.HasValue)
+        {
+            return festivals.Where(f => 
+                f.StartDate.HasValue && f.EndDate.Value.Date >= _customStartDate.Value.Date);
+        }
+        else if (_customEndDate.HasValue)
+        {
+            return festivals.Where(f => 
+                f.EndDate.HasValue && f.EndDate.Value.Date <= _customEndDate.Value.Date);
+        }
+
+        return festivals;
+    }
+    
+    private async Task OnStartDateChanged(DateTime? date)
+    {
+        _customStartDate = date;
+        await ApplyFiltersAsync();
+    }
+
+    private async Task OnEndDateChanged(DateTime? date)
+    {
+        _customEndDate = date;
+        await ApplyFiltersAsync();
+    }
+
+    private bool HasActiveFilters()
+    {
+        return !string.IsNullOrWhiteSpace(_searchTerm) || 
+               _selectedCountryId.HasValue || 
+               _customStartDate.HasValue ||
+               _customEndDate.HasValue;
+    }
+
+    private string GetFilterSummaryText()
+    {
+        var filters = new List<string>();
+        
+        if (!string.IsNullOrWhiteSpace(_searchTerm))
+            filters.Add($"Name: \"{_searchTerm}\"");
+            
+        if (_selectedCountryId.HasValue)
+        {
+            var country = _countries.FirstOrDefault(c => c.Id == _selectedCountryId.Value);
+            if (country != null)
+                filters.Add($"Country: {country.Name}");
+        }
+        
+        if (_customStartDate.HasValue || _customEndDate.HasValue)
+        {
+            var dateFilterText = GetCustomDateFilterText();
+            if (!string.IsNullOrWhiteSpace(dateFilterText))
+                filters.Add($"Date: {dateFilterText}");
+        }
+        
+        return string.Join(" • ", filters);
+    }
+
+    private string GetCustomDateFilterText()
+    {
+        if (_customStartDate.HasValue && _customEndDate.HasValue)
+            return $"{_customStartDate.Value:MMM dd} - {_customEndDate.Value:MMM dd, yyyy}";
+        else if (_customStartDate.HasValue)
+            return $"From {_customStartDate.Value:MMM dd, yyyy}";
+        else if (_customEndDate.HasValue)
+            return $"Until {_customEndDate.Value:MMM dd, yyyy}";
+        return "";
+    }
+    
+    private async Task OpenBookingDialog(int festivalId)
+    {
+        var parameters = new DialogParameters { { "FestivalId", festivalId } };
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialogReference = await DialogService.ShowAsync<BookingDialog>("Book Ticket", parameters, options);
+
+        var result = await dialogReference.Result;
+        if (result != null && !result.Canceled)
+        {
+            Snackbar.Add("Booking complete!", Severity.Success);
+        }
     }
 }

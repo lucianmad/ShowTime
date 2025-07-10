@@ -29,12 +29,13 @@ public class GenericRepository<T> : IRepository<T> where T : class
             throw new Exception($"Unable to retrieve entity with id {id}: {ex.Message}");
         }
     }
-    public async Task AddAsync(T entity)
+    public async Task<T> AddAsync(T entity)
     {
         try
         {
-            await _dbSet.AddAsync(entity);
+            var entry = await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
+            return entry.Entity;       
         }
         catch (Exception ex)
         {

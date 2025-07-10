@@ -53,6 +53,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BdXRoZW50aWNhdGlvbi9Mb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Authentication/Logout.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BdXRoZW50aWNhdGlvbi9Mb2dvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Authentication/Register.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9BdXRoZW50aWNhdGlvbi9SZWdpc3Rlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/BookingDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Cb29raW5nRGlhbG9nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Bookings.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Cb29raW5ncy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/DeleteArtistDialog.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZWxldGVBcnRpc3REaWFsb2cucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -79,14 +95,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ib21lLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Register.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9SZWdpc3Rlci5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9XZWF0aGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/lucianm/RiderProjects/ShowTime/ShowTime/ShowTime/Components/Routes.razor]

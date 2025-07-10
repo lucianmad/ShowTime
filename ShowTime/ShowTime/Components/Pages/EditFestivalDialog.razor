@@ -73,12 +73,6 @@
                                       Label="Splash Art" 
                                       Class="mb-6"
                                       HelperText="Paste a direct image link"/>
-                        
-                        <MudTextField @bind-Value="FestivalToEdit.Capacity"   
-                                      Label="Capacity" 
-                                      Required="true"
-                                      RequiredError="Capacity is required"
-                                      Class="mb-4"/>
                     </EditForm>
                 </div>
             </MudTabPanel>
@@ -111,11 +105,21 @@
                                                   Placeholder="Main Stage, Second Stage, etc."/>
                                 </MudItem>
                                 <MudItem xs="12" sm="6">
+                                    <MudDatePicker @bind-Date="_newLineupDate" 
+                                                   Label="Performance Date" 
+                                                   MinDate="FestivalToEdit.StartDate"
+                                                   MaxDate="FestivalToEdit.EndDate"
+                                                   DisplayMonths="1"
+                                                   TitleDateFormat="dddd, dd MMMM"
+                                                   HelperText="Select the day of performance"/>
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
                                     <MudTimePicker @bind-Time="_newLineupTime" 
                                                    Label="Start Time" 
-                                                   AmPm="false"/>
+                                                   AmPm="false"
+                                                   HelperText="Select the start time"/>
                                 </MudItem>
-                                <MudItem xs="12" sm="6" Class="d-flex align-center">
+                                <MudItem xs="12" Class="d-flex align-center">
                                     <MudButton Color="Color.Primary" 
                                                Variant="Variant.Filled" 
                                                @onclick="AddToLineup"
@@ -136,12 +140,14 @@
                                     <HeaderContent>
                                         <MudTh>Artist</MudTh>
                                         <MudTh>Stage</MudTh>
+                                        <MudTh>Date</MudTh>
                                         <MudTh>Start Time</MudTh>
                                         <MudTh>Actions</MudTh>
                                     </HeaderContent>
                                     <RowTemplate>
                                         <MudTd DataLabel="Artist">@context.ArtistName</MudTd>
                                         <MudTd DataLabel="Stage">@context.Stage</MudTd>
+                                        <MudTd DataLabel="Date">@context.StartTime.ToString("dd MMM yyyy")</MudTd>
                                         <MudTd DataLabel="Start Time">@context.StartTime.ToString("HH:mm")</MudTd>
                                         <MudTd DataLabel="Actions">
                                             <MudIconButton Icon="@Icons.Material.Filled.Edit" 
@@ -174,9 +180,19 @@
                                                       Label="Stage"/>
                                     </MudItem>
                                     <MudItem xs="12" sm="6">
+                                        <MudDatePicker @bind-Date="_editLineupDate" 
+                                                       Label="Performance Date" 
+                                                       MinDate="FestivalToEdit.StartDate"
+                                                       MaxDate="FestivalToEdit.EndDate"
+                                                       DisplayMonths="1"
+                                                       TitleDateFormat="dddd, dd MMMM"
+                                                       HelperText="Select the day of performance"/>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="6">
                                         <MudTimePicker @bind-Time="_editLineupTime" 
                                                        Label="Start Time" 
-                                                       AmPm="false"/>
+                                                       AmPm="false"
+                                                       HelperText="Select the start time"/>
                                     </MudItem>
                                     <MudItem xs="12" Class="d-flex gap-2">
                                         <MudButton Color="Color.Success" 
@@ -238,10 +254,12 @@
     
     private int? _selectedArtistId;
     private string _newLineupStage = string.Empty;
+    private DateTime? _newLineupDate;
     private TimeSpan? _newLineupTime;
     
     private LineupGetDto? _editingLineup;
     private string _editLineupStage = string.Empty;
+    private DateTime? _editLineupDate;
     private TimeSpan? _editLineupTime;
     
     protected override async Task OnInitializedAsync()
@@ -260,8 +278,7 @@
                 CityId = festival.CityId,
                 StartDate = festival.StartDate,
                 EndDate = festival.EndDate,
-                SplashArt = festival.SplashArt,
-                Capacity = festival.Capacity
+                SplashArt = festival.SplashArt
             };
             
             if (festival.CityId.HasValue && _cities != null)
@@ -278,18 +295,18 @@
             Snackbar.Add($"Error loading festival: {ex.Message}", Severity.Error);
         }
     }
-    
+
     private bool IsFormValid =>
         !string.IsNullOrWhiteSpace(FestivalToEdit.Name) &&
         FestivalToEdit.CityId.HasValue &&
         FestivalToEdit.CityId != 0 &&
         FestivalToEdit is { StartDate: not null, EndDate: not null } &&
-        FestivalToEdit.StartDate <= FestivalToEdit.EndDate &&
-        FestivalToEdit.Capacity > 0;
+        FestivalToEdit.StartDate <= FestivalToEdit.EndDate;
     
     private bool CanAddToLineup =>
         _selectedArtistId.HasValue &&
         !string.IsNullOrWhiteSpace(_newLineupStage) &&
+        _newLineupDate.HasValue &&
         _newLineupTime.HasValue;
     
     private async Task SubmitFestival()
@@ -312,12 +329,14 @@
         
         try
         {
+            var performanceDateTime = _newLineupDate!.Value.Date.Add(_newLineupTime!.Value);
+            
             var lineupCreateDto = new LineupCreateDto
             {
                 FestivalId = FestivalId,
                 ArtistId = _selectedArtistId!.Value,
                 Stage = _newLineupStage,
-                StartTime = DateTime.Today.Add(_newLineupTime!.Value)
+                StartTime = performanceDateTime
             };
 
             await LineupService.AddToLineupAsync(lineupCreateDto);
@@ -325,6 +344,7 @@
             
             _selectedArtistId = null;
             _newLineupStage = string.Empty;
+            _newLineupDate = null;
             _newLineupTime = null;
             
             Snackbar.Add("Artist added to lineup successfully", Severity.Success);
@@ -340,13 +360,14 @@
     {
         _editingLineup = lineup;
         _editLineupStage = lineup.Stage;
+        _editLineupDate = lineup.StartTime.Date;
         _editLineupTime = lineup.StartTime.TimeOfDay;
         StateHasChanged();
     }
     
     private async Task SaveLineupEdit()
     {
-        if (_editingLineup == null || _editLineupTime == null) return;
+        if (_editingLineup == null || _editLineupTime == null || _editLineupDate == null) return;
         
         try
         {
@@ -357,12 +378,14 @@
                 return;
             }
             
+            var performanceDateTime = _editLineupDate.Value.Date.Add(_editLineupTime.Value);
+            
             var lineupUpdateDto = new LineupCreateDto
             {
                 FestivalId = FestivalId,
                 ArtistId = artist.Id,
                 Stage = _editLineupStage,
-                StartTime = DateTime.Today.Add(_editLineupTime.Value)
+                StartTime = performanceDateTime
             };
             
             await LineupService.UpdateLineupAsync(lineupUpdateDto);
@@ -371,6 +394,7 @@
             
             _editingLineup = null;
             _editLineupStage = string.Empty;
+            _editLineupDate = null;
             _editLineupTime = null;
             
             Snackbar.Add("Lineup updated successfully", Severity.Success);
@@ -386,6 +410,7 @@
     {
         _editingLineup = null;
         _editLineupStage = string.Empty;
+        _editLineupDate = null;
         _editLineupTime = null;
         StateHasChanged();
     }

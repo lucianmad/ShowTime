@@ -13,7 +13,6 @@ public class FestivalConfiguration : IEntityTypeConfiguration<Festival>
         builder.Property(f => f.Name).IsRequired().HasMaxLength(255);
         builder.Property(f => f.StartDate).IsRequired();
         builder.Property(f => f.EndDate).IsRequired();
-        builder.Property(f => f.Capacity).IsRequired();
         
         builder.HasIndex(f => f.Name).IsUnique();
 
@@ -24,9 +23,5 @@ public class FestivalConfiguration : IEntityTypeConfiguration<Festival>
         builder.HasMany(f => f.Artists)
             .WithMany(a => a.Festivals)
             .UsingEntity<Lineup>();
-        
-        builder.HasMany(f => f.Users)
-            .WithMany(u => u.Festivals)
-            .UsingEntity<Booking>();
     }
 }

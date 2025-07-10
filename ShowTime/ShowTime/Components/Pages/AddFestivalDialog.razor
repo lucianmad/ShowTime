@@ -3,6 +3,8 @@
 @inject IFestivalService FestivalService
 @inject ICountryService CountryService
 @inject ICityService CityService
+@inject ITicketTypeService TicketTypeService
+@inject IFestivalTicketTypeService FestivalTicketTypeService
 @inject ISnackbar Snackbar
 @rendermode InteractiveServer
 
@@ -69,11 +71,26 @@
                           Class="mb-6"
                           HelperText="Paste a direct image link"/>
             
-            <MudTextField @bind-Value="NewFestival.Capacity"
-                          Label="Capacity"
-                          Required="true"
-                          RequiredError="Capacity is required"
-                          Class="mb-4"/>
+            <MudText Typo="Typo.h6" Class="mt-6 mb-2">Ticket Types</MudText>
+
+            <MudTable Items="_ticketTypeCreateDtos">
+                <HeaderContent>
+                    <MudTh>Ticket Type</MudTh>
+                    <MudTh>Price</MudTh>
+                    <MudTh>Quantity</MudTh>
+                </HeaderContent>
+                <RowTemplate Context="ticket">
+                    <MudTd>@ticket.TicketTypeName</MudTd>
+                    <MudTd>
+                        <MudNumericField @bind-Value="ticket.Price" T="int" Min="0" Class="w-24" />
+                    </MudTd>
+                    <MudTd>
+                        <MudNumericField @bind-Value="ticket.Quantity" T="int" Min="0" Class="w-20" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+
+            
         </EditForm>
     </DialogContent>
     <DialogActions>
@@ -101,6 +118,7 @@
     [SupplyParameterFromForm]
     private FestivalCreateDto NewFestival { get; set; } = new();
     
+    private List<FestivalTicketTypeCreateDto> _ticketTypeCreateDtos = new();
     private IList<CountryGetDto>? _countries;
     private IList<CityGetDto>? _cities;
     private int? _selectedCountryId;
@@ -122,6 +140,13 @@
     {
         _countries = await CountryService.GetAllEntitiesAsync();
         _cities = await CityService.GetAllEntitiesAsync();
+        
+        var ticketTypes = await TicketTypeService.GetAllEntitiesAsync();
+        _ticketTypeCreateDtos = ticketTypes.Select(t => new FestivalTicketTypeCreateDto
+        {
+            TicketTypeId = t.Id,
+            TicketTypeName = t.Name
+        }).ToList();
     }
 
     private bool IsFormValid =>
@@ -130,11 +155,25 @@
         NewFestival.CityId != 0 &&
         NewFestival is { StartDate: not null, EndDate: not null } &&
         NewFestival.StartDate <= NewFestival.EndDate &&
-        NewFestival.Capacity > 0;
+        _ticketTypeCreateDtos.Any(t => t.Price > 0 && t.Quantity > 0);
 
     public async Task Submit()
     {
-        await FestivalService.AddEntityAsync(NewFestival); 
+        var createdFestival = await FestivalService.AddEntityAsync(NewFestival); 
+        var ticketTypeDtos = _ticketTypeCreateDtos
+            .Where(t => t.Quantity > 0 && t.Price > 0)
+            .Select(t => new FestivalTicketTypeCreateDto
+            {
+                FestivalId = createdFestival.Id,
+                TicketTypeId = t.TicketTypeId,
+                Price = t.Price,
+                Quantity = t.Quantity
+            }).ToList();
+
+        if (ticketTypeDtos.Any())
+        {
+            await FestivalTicketTypeService.AddMultipleFestivalTicketTypesAsync(createdFestival.Id, ticketTypeDtos);
+        }
         Snackbar.Add("Festival successfully added", Severity.Success);
         MudDialog?.Close(DialogResult.Ok(true));
     }

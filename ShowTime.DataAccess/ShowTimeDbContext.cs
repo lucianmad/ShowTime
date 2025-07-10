@@ -21,6 +21,7 @@ public class ShowTimeDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<TicketType> TicketTypes { get; set; }
+    public DbSet<FestivalTicketType> FestivalTicketTypes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

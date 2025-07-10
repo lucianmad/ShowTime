@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "ShowTime/1.0.0": {
         "dependencies": {
+          "Microsoft.AspNetCore.Components.WebAssembly.Server": "8.0.17",
           "Microsoft.EntityFrameworkCore": "9.0.6",
           "Microsoft.EntityFrameworkCore.Design": "9.0.6",
           "MudBlazor": "8.8.0",
@@ -141,6 +142,14 @@
           "lib/net8.0/Microsoft.AspNetCore.Components.Web.dll": {
             "assemblyVersion": "8.0.0.0",
             "fileVersion": "8.0.1224.60312"
+          }
+        }
+      },
+      "Microsoft.AspNetCore.Components.WebAssembly.Server/8.0.17": {
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Components.WebAssembly.Server.dll": {
+            "assemblyVersion": "8.0.17.0",
+            "fileVersion": "8.0.1725.26609"
           }
         }
       },
@@ -1497,6 +1506,13 @@
       "sha512": "sha512-7dw3N6kH9FNUmJIQgvDtwcVCEdrN0GBwv1Dsej2B+GoaTRtCLuA1tkPm0Vyk+LpLHa0p9CTOUYvRJa07+ksXAw==",
       "path": "microsoft.aspnetcore.components.web/8.0.12",
       "hashPath": "microsoft.aspnetcore.components.web.8.0.12.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Components.WebAssembly.Server/8.0.17": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+sXLj8Pc1sw0xSwF709neoocPRTQAZ+CX9HLPLfLYLkDoPuJPwF9P8nDusQS2QtG/oFB/hTGZ4VOfsw+VdbN2Q==",
+      "path": "microsoft.aspnetcore.components.webassembly.server/8.0.17",
+      "hashPath": "microsoft.aspnetcore.components.webassembly.server.8.0.17.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Cryptography.Internal/8.0.17": {
       "type": "package",

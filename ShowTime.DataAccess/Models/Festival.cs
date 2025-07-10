@@ -8,7 +8,6 @@ public class Festival
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public string SplashArt { get; set; } = String.Empty;
-    public int Capacity { get; set; }
     
     public City? City { get; set; } = null!;   
     
@@ -16,4 +15,5 @@ public class Festival
     public ICollection<Artist> Artists { get; set; } = new List<Artist>();
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     public ICollection<User> Users { get; set; } = new List<User>();
+    public ICollection<FestivalTicketType> FestivalTicketTypes { get; set; } = new List<FestivalTicketType>();
 }

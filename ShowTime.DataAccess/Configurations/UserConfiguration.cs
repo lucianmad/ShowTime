@@ -18,9 +18,5 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(u => u.Role)
             .WithMany(r => r.Users)
             .HasForeignKey(u => u.RoleId);
-        
-        builder.HasMany(u => u.Festivals)
-            .WithMany(f => f.Users)
-            .UsingEntity<Booking>();
     }
 }

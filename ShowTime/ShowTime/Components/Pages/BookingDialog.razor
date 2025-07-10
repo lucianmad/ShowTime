@@ -1,0 +1,107 @@
+@using System.Security.Claims
+@using ShowTime.BusinessLogic.Dtos
+@using Microsoft.AspNetCore.Components.Authorization
+@using ShowTime.BusinessLogic.Abstractions
+@using ShowTime.BusinessLogic.Services
+@inject ISnackbar Snackbar
+@inject IBookingService BookingService
+@inject IFestivalTicketTypeService FestivalTicketTypeService
+@inject AuthenticationStateProvider AuthProvider
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">Select a Ticket Type</MudText>
+
+        @if (_ticketTypes == null)
+        {
+            <MudProgressCircular Indeterminate="true" />
+        }
+        else if (!_ticketTypes.Any())
+        {
+            <MudText>No available tickets.</MudText>
+        }
+        else
+        {
+            <MudList T="FestivalTicketTypeForPurchaseDto">
+                @foreach (var ticket in _ticketTypes)
+                {
+                    <MudListItem T="FestivalTicketTypeForPurchaseDto"
+                                 Value="ticket"
+                                 Clickable="true"
+                                 Selected="_selectedTicket?.TicketTypeId == ticket.TicketTypeId"
+                                 @onclick="@(() => _selectedTicket = ticket)">
+                        <MudStack Spacing="2">
+                            <MudText Typo="Typo.subtitle1">@ticket.TicketTypeName - @ticket.Price RON</MudText>
+                            <MudText Typo="Typo.body2">@ticket.TicketTypeDescription</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Info">Available: @ticket.AvailableQuantity</MudText>
+                        </MudStack>
+                    </MudListItem>
+                }
+            </MudList>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Submit" Disabled="_selectedTicket == null">Book</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public int FestivalId { get; set; }
+
+    private List<FestivalTicketTypeForPurchaseDto>? _ticketTypes;
+    private FestivalTicketTypeForPurchaseDto? _selectedTicket;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _ticketTypes = (await FestivalTicketTypeService.GetAvailableFestivalTicketTypesAsync(FestivalId)).ToList();
+    }
+
+    private async Task Submit()
+    {
+        if (_selectedTicket == null)
+            return;
+
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity?.IsAuthenticated ?? true)
+        {
+            Snackbar.Add("You need to be logged in to book a ticket.", Severity.Warning);
+            return;
+        }
+
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            Snackbar.Add("Invalid user session.", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            await BookingService.CreateBookingAsync(new BookingCreateDto
+            {
+                FestivalId = FestivalId,
+                TicketTypeId = _selectedTicket.TicketTypeId,
+                UserId = userId
+            });
+
+            Snackbar.Add("Ticket booked successfully!", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

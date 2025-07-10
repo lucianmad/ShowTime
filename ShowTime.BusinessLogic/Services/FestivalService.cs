@@ -26,8 +26,7 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
             CityId = festival.CityId,
             StartDate = festival.StartDate,
             EndDate = festival.EndDate,
-            SplashArt = festival.SplashArt,
-            Capacity = festival.Capacity
+            SplashArt = festival.SplashArt
         };
     }
 
@@ -39,8 +38,7 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
             CityId = festivalCreateDto.CityId,
             StartDate = festivalCreateDto.StartDate,
             EndDate = festivalCreateDto.EndDate,
-            SplashArt = festivalCreateDto.SplashArt,
-            Capacity = festivalCreateDto.Capacity
+            SplashArt = festivalCreateDto.SplashArt
         };   
     }
 
@@ -53,11 +51,11 @@ public class FestivalService : GenericEntityService<Festival, FestivalGetDto, Fe
             CityId = festivalCreateDto.CityId,
             StartDate = festivalCreateDto.StartDate,
             EndDate = festivalCreateDto.EndDate,
-            SplashArt = festivalCreateDto.SplashArt,
-            Capacity = festivalCreateDto.Capacity
+            SplashArt = festivalCreateDto.SplashArt
         };
     }
-
+    
+    //nefolosit
     public async Task<List<FestivalGetDto>> FilterByCityAsync(int cityId)
     {
         var festivals = await _festivalRepository.FilterByCity(cityId);
